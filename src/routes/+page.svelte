@@ -1,15 +1,12 @@
 <script lang="ts">
 	import { open } from '@tauri-apps/api/dialog';
-	import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
-	import { invoke } from '@tauri-apps/api/tauri';
-	import { onMount } from 'svelte';
-	import ImageViewer from './ImageViewer.svelte';
-	import Toolbar from './Toolbar.svelte';
-	import Reel from './Reel.svelte';
-	import type { FileEntry } from '@tauri-apps/api/fs';
 	import { WebviewWindow } from '@tauri-apps/api/window';
-	import Settings from './Settings.svelte';
+	import type { readDir, FileEntry } from '@tauri-apps/api/fs';
+
+	import ImageViewer from '$lib/ImageViewer.svelte';
+	import Toolbar from '$lib/Toolbar.svelte';
+	import Reel from '$lib/Reel.svelte';
 
 	let read_dir: string;
 	let img_files: FileEntry[];

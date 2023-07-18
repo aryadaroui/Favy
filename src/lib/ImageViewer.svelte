@@ -10,9 +10,9 @@
 	export function center() {
 		if (zoom < 4) {
 			// img_node.style.transition = 'transform 0.2s cubic-bezier(.5, 1.5, .7, .9)';
-			img_node.style.transition = 'transform 0.25s cubic-bezier(.5, 1.4, .8, .95';
+			img_node.style.transition = 'transform 0.2s cubic-bezier(.5, 1.4, .8, .95';
 		} else {
-			img_node.style.transition = 'transform 0.25s cubic-bezier(.4, 1.2, .9, .98';
+			img_node.style.transition = 'transform 0.2s cubic-bezier(.4, 1.2, .9, .98';
 		}
 
 		zoom = 1;

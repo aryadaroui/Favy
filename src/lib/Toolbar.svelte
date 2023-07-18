@@ -38,6 +38,7 @@
 	<p>{$status}</p>
 	<div class="spacer" />
 	<button id="center" on:click={center}>Center</button>
+	<button id="center" >Page</button>
 	<button id="settings" on:click={settings}>Settings</button>
 </div>
 

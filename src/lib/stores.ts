@@ -31,6 +31,7 @@ export type Settings = {
 		transparency: number,
 		visible: boolean,
 	};
+	reel_size: number,
 };
 
 const initial_settings: Settings = {
@@ -42,6 +43,7 @@ const initial_settings: Settings = {
 		transparency: 0.5,
 		visible: true,
 	},
+	reel_size: 10
 };
 const initial_filter: Filter = {
 	hate: {

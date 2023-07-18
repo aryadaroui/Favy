@@ -2,33 +2,62 @@
 	import { onMount } from 'svelte';
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import ImageBlobReduce from 'image-blob-reduce';
-	import { workspace_dir, current_photo } from '$lib/stores';
+	import { workspace_dir, status, settings } from '$lib/stores';
 	import { tick } from 'svelte';
 
 	let reel_node: HTMLDivElement;
+	let filtered_photo_names: string[] = [];
 	let photo_reel: string[] = [];
 	// $: photo_reel = [''];
 
 	let reel_idx: number = 0;
 
+	let page_idx: number = 0;
+	let num_pages: number = 0;
+
+	export let asdf = 0;
+
 	function set_reel_idx(idx: number) {
 		document.getElementById(photo_reel[reel_idx])?.classList.remove('selected');
 		reel_idx = idx;
 		document.getElementById(photo_reel[reel_idx])?.classList.add('selected');
+
+		$status = `${reel_idx + 1}/${photo_reel.length}`;
 	}
 
 	const reducer = new ImageBlobReduce();
 
 	export let parent_updater: (photo_name: string) => void;
 
-	export function set(filtered_photo_names: string[]) {
+	export function set(new_filtered_photo_names: string[]) {
 		photo_reel = [];
 		// force svelte to update the photo reel before editing it
 		tick().then(() => {
-			photo_reel = filtered_photo_names;
+			filtered_photo_names = new_filtered_photo_names;
+			photo_reel = filtered_photo_names.slice(0, $settings.reel_size);
+
+			page_idx = 0;
+			num_pages = Math.floor(filtered_photo_names.length / $settings.reel_size);
+
 			set_reel_idx(0); // BUG: does not update the style on the first image for some reason
 			scroll_to_photo(photo_reel[reel_idx]);
 		});
+	}
+
+	export function next_reel() {
+		if (page_idx < num_pages - 1) {
+			photo_reel = [];
+			tick().then(() => {
+				page_idx += 1;
+				// i really don't like this.
+				// TODO: make photo_reel a 2D array
+				photo_reel = filtered_photo_names.slice(page_idx * $settings.reel_size, (page_idx + 1) * $settings.reel_size);
+				set_reel_idx(0);
+				scroll_to_photo(photo_reel[reel_idx]);
+			});
+		} else {
+			console.log('no more pages');
+		}
 	}
 
 	export function next(): string {
@@ -37,7 +66,12 @@
 			scroll_to_photo(photo_reel[reel_idx]);
 			return photo_reel[reel_idx];
 		} else {
-			return '';
+			if (page_idx < num_pages - 1) {
+				next_reel();
+				return photo_reel[reel_idx];
+			} else {
+				return '';
+			}
 		}
 	}
 

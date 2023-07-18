@@ -73,6 +73,7 @@
 
 	function update_current_photo_by_name(photo_name: string) {
 		const idx = $photo_map.get(photo_name)?.idx;
+		image_viewer.center();
 
 		if (idx != undefined) {
 			$current_photo = {

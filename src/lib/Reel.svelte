@@ -3,10 +3,11 @@
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import ImageBlobReduce from 'image-blob-reduce';
 	import { workspace_dir, current_photo } from '$lib/stores';
-	import { get } from 'svelte/store';
+	import { tick } from 'svelte';
 
 	let reel_node: HTMLDivElement;
 	let photo_reel: string[] = [];
+	// $: photo_reel = [''];
 
 	let reel_idx: number = 0;
 
@@ -15,7 +16,13 @@
 	export let parent_updater: (photo_name: string) => void;
 
 	export function set(filtered_photo_names: string[]) {
-		photo_reel = filtered_photo_names;
+		photo_reel = [];
+		// force svelte to update the photo reel before editing it
+		tick().then(() => {
+			photo_reel = filtered_photo_names;
+			reel_idx = 0;
+			scroll_to_photo(photo_reel[reel_idx]);
+		});
 	}
 
 	export function next(): string {
@@ -40,6 +47,7 @@
 
 	function scroll_to_photo(id: string) {
 		const photo = document.getElementById(id);
+		reel_idx = photo_reel.indexOf(id);
 		if (photo) {
 			photo.scrollIntoView({ behavior: 'smooth', inline: 'center' });
 		}
@@ -66,12 +74,16 @@
 		return URL.createObjectURL(thumbnail);
 	}
 
-	const lazyLoad = (image: HTMLImageElement, filename: string) => {
+	const lazy_load = (image: HTMLImageElement, filename: string) => {
+		console.log('lazy loading: ', image, filename);
+
 		const loaded = () => {
 			image.style.opacity = '1'; // REPL hack to apply loading animation
 		};
 		const observer = new IntersectionObserver((entries) => {
 			if (entries[0].isIntersecting) {
+				console.log('lazy loading: ', image, filename);
+
 				make_thumbnail(filename, 150).then((url) => {
 					image.src = url;
 				});
@@ -106,29 +118,41 @@
 			event.currentTarget.scrollLeft += event.deltaY + event.deltaX;
 			event.preventDefault();
 		});
+
+		window.addEventListener('keydown', (event) => {
+			// check for ` key
+			// if (event.key === '`') {
+			// 	console.log('resetting reel');
+
+			// 	// let first = photo_reel[0];
+			// 	// photo_reel = [];
+
+			// 	// document.getElementById(first)?.remove();
+				
+			// 	// set([])
+			// }
+		});
 	});
 </script>
 
 <div bind:this={reel_node} class="reel">
-	<div class="reel-item">
-		<div id="pad" />
-	</div>
-
-	<div class="reel-item">
-		<!-- <img bind:this={rust_test} /> -->
+	<div class="scroll-item">
+		<div class="pad">
+			<!-- <p>photo reel is {photo_reel}</p> -->
+		</div>
 	</div>
 
 	{#each photo_reel as photo_name}
-		<div class="reel-item">
-			<img id={photo_name} use:lazyLoad={photo_name} on:click={photo_on_click} />
+		<div class="scroll-item" >
+			<img id={photo_name} use:lazy_load={photo_name} on:click={photo_on_click} />
 		</div>
 	{/each}
 
-	<div class="reel-item">
-		<div id="pad" />
+	<div class="scroll-item">
+		<div class="pad" />
 	</div>
 
-	<div id="center-marker" />
+	<!-- <div id="center-marker" /> -->
 </div>
 
 <style lang="scss">
@@ -157,12 +181,13 @@
 			display: none;
 		}
 
-		.reel-item {
-			border: 1px solid gray;
+		.scroll-item {
+			// border: 1px solid gray;
 		}
 
-		#pad {
-			width: calc(50vw - 75px - 20px - 2px);
+		.pad {
+			width: calc(50vw - 75px - 20px);
+			// margin: 0 20px;
 			height: 200px;
 			background-color: rgba(16, 16, 16, 0.2);
 		}

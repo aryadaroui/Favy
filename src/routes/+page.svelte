@@ -118,7 +118,7 @@
 
 	window.addEventListener('keydown', (e) => {
 		if (e.key === 'Enter') {
-			image_viewer.reset();
+			image_viewer.center();
 		}
 
 		if (e.key === 'o' && e.metaKey) {
@@ -141,7 +141,7 @@
 	<Toolbar
 		{choose_dir}
 		center={() => {
-			image_viewer.reset();
+			image_viewer.center();
 		}}
 		settings={open_settings} />
 

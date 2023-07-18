@@ -1,14 +1,14 @@
 import { writable } from 'svelte/store';
 
-type PhotoName = string;
-type PhotoInfo = {
+export type PhotoName = string;
+export type PhotoInfo = {
 	hate: boolean,
 	rating: number,
 	love: boolean,
-	thumbnail: Blob,
+	thumbnail: Blob | null,
+	idx: number,
 };
-
-type Filter = {
+export type Filter = {
 	hate: {
 		is_on: boolean,
 		look_for: boolean,
@@ -22,8 +22,7 @@ type Filter = {
 		look_for: boolean,
 	},
 };
-
-type Settings = {
+export type Settings = {
 	canvas: {
 		transparency: number,
 		visible: boolean,
@@ -34,13 +33,40 @@ type Settings = {
 	};
 };
 
-export const workspace_dir = writable('');
-export const photo_map = writable(new Map<PhotoName, PhotoInfo>());
-export const current_photo = writable<PhotoName>('');
+const initial_settings: Settings = {
+	canvas: {
+		transparency: 0.5,
+		visible: true,
+	},
+	toolbar: {
+		transparency: 0.5,
+		visible: true,
+	},
+};
+const initial_filter: Filter = {
+	hate: {
+		is_on: false,
+		look_for: false,
+	},
+	rating: {
+		is_on: false,
+		look_for: 0,
+	},
+	love: {
+		is_on: false,
+		look_for: false,
+	},
+};
 
-export const filter = writable({} as Filter);
+
+export const workspace_dir = writable('');
+export const photo_names = writable([] as PhotoName[]);
+export const photo_map = writable(new Map<PhotoName, PhotoInfo>());
+export const current_photo = writable({ photo_name: '', idx: 0 });
+
+export const filter = writable(initial_filter);
 export const status = writable('ready');
 
-export const settings = writable({} as Settings);
+export const settings = writable(initial_settings);
 
 // export const cache

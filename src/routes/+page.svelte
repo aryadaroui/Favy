@@ -8,11 +8,12 @@
 	import ImageViewer from '$lib/ImageViewer.svelte';
 	import Toolbar from '$lib/Toolbar.svelte';
 	import Reel from '$lib/Reel.svelte';
-	import {workspace_dir, } from '$lib/stores';
+	import { workspace_dir, photo_names, photo_map, current_photo } from '$lib/stores';
 
 	// let $workspace_dir: string;
-	let img_files: FileEntry[];
-	let img_idx: number = 0;
+	let files: string[] | null;
+	// let img_idx: number = 0;
+
 	let image_viewer: ImageViewer;
 	let reel: Reel;
 
@@ -23,52 +24,79 @@
 			title: 'Choose folder', // including this speeds up dialog open time on macOS for unknown reason
 		}).then(async (selecton) => {
 			if (selecton) {
-				$workspace_dir = selecton.toString();
+				$workspace_dir = selecton.toString() + '/'; // SET workspace_dir store
 
-				img_files = await readDir($workspace_dir, { recursive: false });
-				img_files = img_files.filter((file) => {
+				// get only the .name field of each FileEntry
+				files = (await readDir($workspace_dir, { recursive: false })).map((file) => file.name as string);
+				files = files.filter((file) => {
 					const imageExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.tif', '.tiff'];
-					const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+					const extension = file.substring(file.lastIndexOf('.')).toLowerCase();
 					return imageExtensions.includes(extension);
 				});
-				img_files.sort((a, b) => a.name.localeCompare(b.name));
+				files.sort((a, b) => a.localeCompare(b));
 
-				img_idx = 0;
-				const path_str = convertFileSrc(img_files[img_idx].path);
-				image_viewer.set_image(path_str);
+				$photo_names = files; // SET photo_names store
+				files.forEach((file, idx) => {
+					// SET photo_map store
+					$photo_map.set(file, {
+						hate: false,
+						rating: 0,
+						love: false,
+						thumbnail: null,
+						idx: idx,
+					});
+				});
+				files = null; // clear files array to prevent bugs. use photo_names instead
 
-				// reel.set_images(img_files.map((file) => convertFileSrc(file.path)));
-				reel.set_images(img_files.map((file) => file.path));
+				// SET current_photo store
+				$current_photo = {
+					idx: 0,
+					photo_name: $photo_names[0],
+				};
+
+				// const path_str = convertFileSrc(files[img_idx].path);
+				image_viewer.set_image($current_photo.photo_name);
+
+				reel.set($photo_names.filter(filter));
 			} else {
 			}
 		});
 	}
 
-	function next() {
-		if (img_idx < img_files.length - 1) {
-			img_idx++;
-		} else {
-			// img_idx = 0;
-			console.log('END OF REEL');
-		}
+	function update_current_photo(idx: number) {
+		$current_photo = {
+			idx: idx,
+			photo_name: $photo_names[idx],
+		};
+	}
 
-		const path_str = convertFileSrc(img_files[img_idx].path);
-		image_viewer.set_image(path_str);
-		// console.log("app next");
-		reel.next();
+	function filter(photo_name: string) {
+		// placeholder
+		return true;
+	}
+
+	function next() {
+		let next_photo = reel.next();
+
+		if (next_photo != '') {
+			// @ts-ignore map lookup could be undefined
+			update_current_photo($photo_map.get(next_photo).idx);
+			image_viewer.set_image(next_photo);
+		} else {
+			console.log('/:next(): cannot get next photo; end of reel');
+		}
 	}
 
 	function prev() {
-		if (img_idx > 0) {
-			img_idx--;
-		} else {
-			// img_idx = img_files.length - 1;
-			console.log('START OF REEL');
-		}
+		let prev_photo = reel.prev();
 
-		const path_str = convertFileSrc(img_files[img_idx].path);
-		image_viewer.set_image(path_str);
-		reel.prev();
+		if (prev_photo != '') {
+			// @ts-ignore map lookup could be undefined
+			update_current_photo($photo_map.get(prev_photo).idx);
+			image_viewer.set_image(prev_photo);
+		} else {
+			console.log('/:prev(): cannot get prev photo; beginning of reel');
+		}
 	}
 
 	function open_settings() {

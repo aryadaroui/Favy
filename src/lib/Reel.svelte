@@ -11,6 +11,12 @@
 
 	let reel_idx: number = 0;
 
+	function set_reel_idx(idx: number) {
+		document.getElementById(photo_reel[reel_idx])?.classList.remove('selected');
+		reel_idx = idx;
+		document.getElementById(photo_reel[reel_idx])?.classList.add('selected');
+	}
+
 	const reducer = new ImageBlobReduce();
 
 	export let parent_updater: (photo_name: string) => void;
@@ -20,14 +26,14 @@
 		// force svelte to update the photo reel before editing it
 		tick().then(() => {
 			photo_reel = filtered_photo_names;
-			reel_idx = 0;
+			set_reel_idx(0); // BUG: does not update the style on the first image for some reason
 			scroll_to_photo(photo_reel[reel_idx]);
 		});
 	}
 
 	export function next(): string {
 		if (reel_idx < photo_reel.length - 1) {
-			reel_idx++;
+			set_reel_idx(reel_idx + 1);
 			scroll_to_photo(photo_reel[reel_idx]);
 			return photo_reel[reel_idx];
 		} else {
@@ -37,7 +43,7 @@
 
 	export function prev(): string {
 		if (reel_idx > 0) {
-			reel_idx--;
+			set_reel_idx(reel_idx - 1);
 			scroll_to_photo(photo_reel[reel_idx]);
 			return photo_reel[reel_idx];
 		} else {
@@ -47,7 +53,7 @@
 
 	function scroll_to_photo(id: string) {
 		const photo = document.getElementById(id);
-		reel_idx = photo_reel.indexOf(id);
+		set_reel_idx(photo_reel.indexOf(id));
 		if (photo) {
 			photo.scrollIntoView({ behavior: 'smooth', inline: 'center' });
 		}
@@ -75,15 +81,17 @@
 	}
 
 	const lazy_load = (image: HTMLImageElement, filename: string) => {
-		console.log('lazy loading: ', image, filename);
-
 		const loaded = () => {
 			image.style.opacity = '1'; // REPL hack to apply loading animation
+
+			// if image is first in reel, add selected class
+			// this is workaround for the bug where the first image in the reel does not get the selected class immediately
+			if (image.id === photo_reel[0] && !image.classList.contains('selected') && reel_idx === 0) {
+				image.classList.add('selected');
+			}
 		};
 		const observer = new IntersectionObserver((entries) => {
 			if (entries[0].isIntersecting) {
-				console.log('lazy loading: ', image, filename);
-
 				make_thumbnail(filename, 150).then((url) => {
 					image.src = url;
 				});
@@ -123,12 +131,9 @@
 			// check for ` key
 			// if (event.key === '`') {
 			// 	console.log('resetting reel');
-
 			// 	// let first = photo_reel[0];
 			// 	// photo_reel = [];
-
 			// 	// document.getElementById(first)?.remove();
-				
 			// 	// set([])
 			// }
 		});
@@ -143,7 +148,7 @@
 	</div>
 
 	{#each photo_reel as photo_name}
-		<div class="scroll-item" >
+		<div class="scroll-item">
 			<img id={photo_name} use:lazy_load={photo_name} on:click={photo_on_click} />
 		</div>
 	{/each}
@@ -210,5 +215,9 @@
 			height: 200px;
 			border: 1px solid white;
 		}
+	}
+
+	:global(.selected) {
+		border: 1px solid white;
 	}
 </style>

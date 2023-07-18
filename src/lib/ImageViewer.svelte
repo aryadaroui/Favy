@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
-	import {workspace_dir} from '$lib/stores';
-
+	import { workspace_dir } from '$lib/stores';
 
 	export function set_image(path: string) {
-		img_node.src = convertFileSrc( $workspace_dir + path);
+		img_node.src = convertFileSrc($workspace_dir + path);
 	}
 
 	export function center() {

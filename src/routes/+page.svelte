@@ -63,11 +63,26 @@
 		});
 	}
 
-	function update_current_photo(idx: number) {
+	function update_current_photo_by_idx(idx: number) {
 		$current_photo = {
 			idx: idx,
 			photo_name: $photo_names[idx],
 		};
+		image_viewer.set_image($current_photo.photo_name);
+	}
+
+	function update_current_photo_by_name(photo_name: string) {
+		const idx = $photo_map.get(photo_name)?.idx;
+
+		if (idx != undefined) {
+			$current_photo = {
+				idx: idx,
+				photo_name: photo_name,
+			};
+			image_viewer.set_image($current_photo.photo_name);
+		} else {
+			console.error('/:update_current_photo_by_name(): photo_name not found in photo_map');
+		}
 	}
 
 	function filter(photo_name: string) {
@@ -79,9 +94,7 @@
 		let next_photo = reel.next();
 
 		if (next_photo != '') {
-			// @ts-ignore map lookup could be undefined
-			update_current_photo($photo_map.get(next_photo).idx);
-			image_viewer.set_image(next_photo);
+			update_current_photo_by_name(next_photo);
 		} else {
 			console.log('/:next(): cannot get next photo; end of reel');
 		}
@@ -91,9 +104,7 @@
 		let prev_photo = reel.prev();
 
 		if (prev_photo != '') {
-			// @ts-ignore map lookup could be undefined
-			update_current_photo($photo_map.get(prev_photo).idx);
-			image_viewer.set_image(prev_photo);
+			update_current_photo_by_name(prev_photo);
 		} else {
 			console.log('/:prev(): cannot get prev photo; beginning of reel');
 		}
@@ -135,7 +146,7 @@
 		settings={open_settings} />
 
 	<div id="reel">
-		<Reel bind:this={reel} />
+		<Reel bind:this={reel} parent_updater={update_current_photo_by_name} />
 	</div>
 </main>
 

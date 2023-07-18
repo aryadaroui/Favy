@@ -3,6 +3,7 @@
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import ImageBlobReduce from 'image-blob-reduce';
 	import { workspace_dir, current_photo } from '$lib/stores';
+	import { get } from 'svelte/store';
 
 	let reel_node: HTMLDivElement;
 	let photo_reel: string[] = [];
@@ -11,6 +12,8 @@
 
 	const reducer = new ImageBlobReduce();
 
+	export let parent_updater: (photo_name: string) => void;
+
 	export function set(filtered_photo_names: string[]) {
 		photo_reel = filtered_photo_names;
 	}
@@ -18,7 +21,7 @@
 	export function next(): string {
 		if (reel_idx < photo_reel.length - 1) {
 			reel_idx++;
-			reel_node.scrollBy(100, 0);
+			scroll_to_photo(photo_reel[reel_idx]);
 			return photo_reel[reel_idx];
 		} else {
 			return '';
@@ -28,11 +31,26 @@
 	export function prev(): string {
 		if (reel_idx > 0) {
 			reel_idx--;
-			reel_node.scrollBy(-100, 0);
+			scroll_to_photo(photo_reel[reel_idx]);
 			return photo_reel[reel_idx];
 		} else {
 			return '';
 		}
+	}
+
+	function scroll_to_photo(id: string) {
+		const photo = document.getElementById(id);
+		if (photo) {
+			photo.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+		}
+	}
+
+	function photo_on_click(event: MouseEvent) {
+		// get the id of the element that was clicked
+		const id = (event.target as HTMLImageElement).id;
+		scroll_to_photo(id);
+
+		parent_updater(id);
 	}
 
 	let lazy_load_opts = {
@@ -48,7 +66,7 @@
 		return URL.createObjectURL(thumbnail);
 	}
 
-	export const lazyLoad = (image: HTMLImageElement, filename: string) => {
+	const lazyLoad = (image: HTMLImageElement, filename: string) => {
 		const loaded = () => {
 			image.style.opacity = '1'; // REPL hack to apply loading animation
 		};
@@ -102,9 +120,7 @@
 
 	{#each photo_reel as photo_name}
 		<div class="reel-item">
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<!-- <img src={image} /> -->
-			<img use:lazyLoad={photo_name} />
+			<img id={photo_name} use:lazyLoad={photo_name} on:click={photo_on_click} />
 		</div>
 	{/each}
 

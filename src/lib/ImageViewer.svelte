@@ -8,13 +8,17 @@
 	}
 
 	export function center() {
+		if (zoom < 4) {
+			// img_node.style.transition = 'transform 0.2s cubic-bezier(.5, 1.5, .7, .9)';
+			img_node.style.transition = 'transform 0.25s cubic-bezier(.5, 1.4, .8, .95';
+		} else {
+			img_node.style.transition = 'transform 0.25s cubic-bezier(.4, 1.2, .9, .98';
+		}
+
 		zoom = 1;
 		pan_x = 0;
 		pan_y = 0;
 
-		// TODO: dont apply transition if zoom is too large
-		img_node.style.transition = `transform 0.2s cubic-bezier(.5, 1.5, .7, .9)`;
-		img_node.style.imageRendering = 'auto'; // maybe try optimizeSpeed
 		set_transform();
 	}
 
@@ -61,11 +65,11 @@
 			pan_x = new_pan_x;
 			pan_y = new_pan_y;
 
-			if (zoom > 8) {
-				img_node.style.imageRendering = 'pixelated';
-			} else {
-				img_node.style.imageRendering = 'auto';
-			}
+			// if (zoom > 8) {
+			// 	img_node.style.imageRendering = 'pixelated';
+			// } else {
+			// 	img_node.style.imageRendering = 'auto';
+			// }
 
 			set_transform();
 		});
@@ -136,7 +140,7 @@
 		-webkit-user-drag: none;
 		height: 100%;
 		width: auto;
-		// image-rendering: pixelated;
+		image-rendering: optimizeSpeed;
 
 		translate: translate(0px, 100px);
 

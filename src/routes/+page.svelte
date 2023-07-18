@@ -2,13 +2,15 @@
 	import { open } from '@tauri-apps/api/dialog';
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import { WebviewWindow } from '@tauri-apps/api/window';
-	import type { readDir, FileEntry } from '@tauri-apps/api/fs';
+	import { readDir } from '@tauri-apps/api/fs';
+	import type { FileEntry } from '@tauri-apps/api/fs';
 
 	import ImageViewer from '$lib/ImageViewer.svelte';
 	import Toolbar from '$lib/Toolbar.svelte';
 	import Reel from '$lib/Reel.svelte';
+	import {workspace_dir, } from '$lib/stores';
 
-	let read_dir: string;
+	// let $workspace_dir: string;
 	let img_files: FileEntry[];
 	let img_idx: number = 0;
 	let image_viewer: ImageViewer;
@@ -18,24 +20,27 @@
 		open({
 			directory: true,
 			multiple: false,
-			title: 'Choose a directory', // including this speeds up dialog open time on macOS for unknown reason
+			title: 'Choose folder', // including this speeds up dialog open time on macOS for unknown reason
 		}).then(async (selecton) => {
-			read_dir = selecton.toString();
+			if (selecton) {
+				$workspace_dir = selecton.toString();
 
-			img_files = await readDir(read_dir, { recursive: false });
-			img_files = img_files.filter((file) => {
-				const imageExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.tif', '.tiff'];
-				const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-				return imageExtensions.includes(extension);
-			});
-			img_files.sort((a, b) => a.name.localeCompare(b.name));
+				img_files = await readDir($workspace_dir, { recursive: false });
+				img_files = img_files.filter((file) => {
+					const imageExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.tif', '.tiff'];
+					const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+					return imageExtensions.includes(extension);
+				});
+				img_files.sort((a, b) => a.name.localeCompare(b.name));
 
-			img_idx = 0;
-			const path_str = convertFileSrc(img_files[img_idx].path);
-			image_viewer.set_image(path_str);
+				img_idx = 0;
+				const path_str = convertFileSrc(img_files[img_idx].path);
+				image_viewer.set_image(path_str);
 
-			// reel.set_images(img_files.map((file) => convertFileSrc(file.path)));
-			reel.set_images(img_files.map((file) => file.path));
+				// reel.set_images(img_files.map((file) => convertFileSrc(file.path)));
+				reel.set_images(img_files.map((file) => file.path));
+			} else {
+			}
 		});
 	}
 
@@ -111,27 +116,6 @@
 		display: flex;
 		flex-direction: column;
 		height: 100vh;
-		width: calc(100vw - 2px);
-
-		div#toolbar {
-			display: flex;
-			flex-direction: row;
-			justify-content: flex-start;
-			align-items: center;
-			height: 30px;
-			width: calc(100vw - 2px);
-			background-color: rgba(37, 37, 37, 1);
-
-			button#choose-dir {
-				max-width: 200px;
-				height: 28px;
-			}
-		}
-
-		// div#reel {
-		//   background-color: rgba(40, 40, 40, 1);
-		//   height: 200px;
-		//   width: calc(100vw - 2px);
-		// }
+		width: 100vw;
 	}
 </style>

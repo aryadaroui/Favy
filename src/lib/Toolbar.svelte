@@ -22,11 +22,13 @@
 	</div>
 
 	<div class="group">
-		<button id="heart">❤️</button>
+		<button id="heart">❌</button>
 		<div class="spacer" />
 		<button id="star-1">⭐️</button>
 		<button id="star-2">⭐️</button>
 		<button id="star-3">⭐️</button>
+		<div class="spacer" />
+		<button id="heart">❤️</button>
 	</div>
 
 	<p>{filename}</p>

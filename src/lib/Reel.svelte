@@ -110,7 +110,7 @@
 
 		background-color: rgba(40, 40, 40, 1);
 		height: 200px;
-		width: calc(100vw - 2px);
+		width: 100%;
 		flex-wrap: nowrap;
 		overflow-x: scroll;
 		overflow-y: hidden;

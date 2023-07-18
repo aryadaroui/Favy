@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { current_photo, status } from '$lib/stores';
+
 	export let choose_dir: () => void;
 	//   export let filter: () => void;
 	//   export let export_files: () => void;
@@ -8,7 +10,7 @@
 	//   export let star_2: () => void;
 	//   export let star_3: () => void;
 
-	export let filename: string = 'untitled.jpg';
+	// export let filename: string = 'untitled.jpg';
 
 	export let center: () => void;
 	export let settings: () => void;
@@ -19,6 +21,8 @@
 		<button id="choose-dir" on:click={choose_dir}>Choose folder</button>
 		<button id="filter">Filter</button>
 		<button id="export">Export</button>
+		<div class="spacer" />
+		<p>{$current_photo.photo_name}</p>
 	</div>
 
 	<div class="group">
@@ -31,7 +35,7 @@
 		<button id="heart">❤️</button>
 	</div>
 
-	<p>{filename}</p>
+	<p>{$status}</p>
 	<div class="spacer" />
 	<button id="center" on:click={center}>Center</button>
 	<button id="settings" on:click={settings}>Settings</button>

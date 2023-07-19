@@ -184,6 +184,7 @@
 			img.style.opacity = '1'; // REPL hack to apply loading animation
 			if (img.id == current.photo.name) {
 				img.classList.add('selected');
+				scroll_to_photo(current.photo.name);
 			}
 		};
 		const observer = new IntersectionObserver((entries) => {

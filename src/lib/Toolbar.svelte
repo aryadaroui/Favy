@@ -25,7 +25,7 @@
 		<p>{$current_photo.photo_name}</p>
 	</div>
 
-	<div class="group flex-center">
+	<div class="group center">
 		<button id="heart">❌</button>
 		<div class="spacer" />
 		<button id="star-1">⭐️</button>
@@ -39,7 +39,7 @@
 		<p>{$status}</p>
 		<div class="spacer" />
 		<button id="center" on:click={center}>Center</button>
-		<button id="center">Page</button>
+		<button id="center">Goto</button>
 		<button id="settings" on:click={settings}>Settings</button>
 	</div>
 </div>

@@ -5,7 +5,6 @@
 	import { status } from '$lib/stores';
 
 	// // // types
-
 	type PhotoName = string;
 
 	interface PhotoReel {
@@ -44,15 +43,19 @@
 		},
 		page_idx: 0,
 		set(photo_idx: number, page_idx: number) {
+			// TODO: use svelte's builtin class directives for styling. unfortunately i can't get it to update at the moment.
+
+			document.getElementById(current.photo.name)?.classList.remove('selected');
 			this.photo.idx = photo_idx;
 			this.photo.name = photo_table[page_idx][photo_idx];
 			this.page_idx = page_idx;
 
 			on_current_photo_change(current.photo.name);
 			scroll_to_photo(current.photo.name);
-			$status = `🌌 ${current.photo.idx + 1}/${photo_table[current.page_idx].length}, 📑 ${current.page_idx + 1}/${photo_table.length}`;
-
-			// TODO: add class styling updates
+			$status = `🌌 ${current.photo.idx + 1}/${photo_table[current.page_idx].length}, 📑 ${current.page_idx + 1}/${
+				photo_table.length
+			}`;
+			document.getElementById(current.photo.name)?.classList.add('selected');
 		},
 	};
 	const reducer = new ImageBlobReduce();
@@ -152,12 +155,9 @@
 
 		const loaded = () => {
 			img.style.opacity = '1'; // REPL hack to apply loading animation
-
-			// if image is first in reel, add selected class
-			// this is workaround for the bug where the first image in the reel does not get the selected class immediately
-			// if (img.id === current.photo.name && !img.classList.contains('selected') && current.photo.idx === 0) {
-			// 	img.classList.add('selected');
-			// }
+			if (img.id == current.photo.name) {
+				img.classList.add('selected');
+			}
 		};
 		const observer = new IntersectionObserver((entries) => {
 			if (entries[0].isIntersecting) {
@@ -198,7 +198,6 @@
 				// ignore small movements, like trackpad scrolling
 				return;
 			}
-
 			//@ts-ignore - .scrollLeft IS a property of currentTarget
 			event.currentTarget.scrollLeft += event.deltaY + event.deltaX;
 			event.preventDefault();
@@ -208,9 +207,7 @@
 
 <div bind:this={reel_node} class="reel">
 	<div class="scroll-item">
-		<div class="pad">
-			<!-- <p>photo reel is {photo_reel}</p> -->
-		</div>
+		<div class="pad" />
 	</div>
 
 	{#each photo_reel.buffer as photo_name}
@@ -234,7 +231,6 @@
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
-		// justify-content: center;
 		scroll-behavior: smooth;
 		align-items: center;
 
@@ -244,8 +240,6 @@
 		flex-wrap: nowrap;
 		overflow-x: scroll;
 		overflow-y: hidden;
-		// height: 100vh;
-		// width: 100vw;
 		background-color: rgba(32, 32, 32, 0.7);
 
 		scroll-snap-type: x mandatory;
@@ -274,7 +268,8 @@
 			cursor: pointer;
 			margin: 0 20px;
 			image-rendering: optimizeSpeed;
-			transition: height 0.2s ease-in-out;
+			border: 1px solid transparent;
+			// transition: border 0.4s ease-in; // laggy
 		}
 
 		#center-marker {
@@ -287,6 +282,7 @@
 	}
 
 	:global(.selected) {
-		border: 1px solid white;
+		border: 1px solid white !important;
+		// transition: border 0.4s ease-out;
 	}
 </style>

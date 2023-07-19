@@ -212,8 +212,6 @@
 		flex-wrap: nowrap;
 		overflow-x: scroll;
 		overflow-y: hidden;
-		// height: 100vh;
-		// width: 100vw;
 		background-color: rgba(32, 32, 32, 0.7);
 
 		scroll-snap-type: x mandatory;

@@ -75,11 +75,8 @@
 		display: flex;
 		flex-direction: row;
 		flex-grow: 1;
-		// justify-content: center;
-		// justify-content: flex-start;
 		align-items: center;
 		height: 30px;
-		// width: calc(100vw - 2px);
 		background-color: rgba(37, 37, 37, 1);
 	}
 

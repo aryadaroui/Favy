@@ -4,6 +4,8 @@
 	import ImageBlobReduce from 'image-blob-reduce';
 	import { status } from '$lib/stores';
 
+	//TODO: need an evernt dispatch on lazy load done
+
 	// // // types
 	type PhotoName = string;
 

@@ -1,0 +1,292 @@
+<script lang="ts">
+	import { onMount, tick } from 'svelte';
+	import { convertFileSrc } from '@tauri-apps/api/tauri';
+	import ImageBlobReduce from 'image-blob-reduce';
+	import { status } from '$lib/stores';
+
+	// // // types
+
+	type PhotoName = string;
+
+	interface PhotoReel {
+		buffer: PhotoName[];
+		set: (page_idx: number) => void;
+	}
+
+	interface Current {
+		photo: {
+			idx: number;
+			name: string;
+		};
+		page_idx: number;
+		set: (photo_idx: number, page_idx: number) => void;
+	}
+
+	// // // declarations
+	let dir: string;
+	let reel_node: HTMLDivElement;
+	let photo_table: string[][] = [];
+
+	const photo_reel: PhotoReel = {
+		buffer: [],
+		set(page_idx: number) {
+			photo_reel.buffer = [];
+			tick().then(() => {
+				photo_reel.buffer = photo_table[page_idx];
+			});
+		},
+	};
+
+	const current: Current = {
+		photo: {
+			idx: 0,
+			name: '',
+		},
+		page_idx: 0,
+		set(photo_idx: number, page_idx: number) {
+			this.photo.idx = photo_idx;
+			this.photo.name = photo_table[page_idx][photo_idx];
+			this.page_idx = page_idx;
+
+			on_current_photo_change(current.photo.name);
+			scroll_to_photo(current.photo.name);
+			$status = `🌌 ${current.photo.idx + 1}/${photo_table[current.page_idx].length}, 📑 ${current.page_idx + 1}/${photo_table.length}`;
+
+			// TODO: add class styling updates
+		},
+	};
+	const reducer = new ImageBlobReduce();
+
+	// // // exports
+	export let on_current_photo_change: (photo_name: PhotoName) => void;
+
+	export function set(new_dir: string, new_photo_names: PhotoName[], page_size: number) {
+		dir = new_dir;
+		// populate photo_table with each subarray being a page of photos with max length of page_size
+		for (let i = 0; i < new_photo_names.length; i += page_size) {
+			photo_table.push(new_photo_names.slice(i, i + page_size));
+		}
+		photo_reel.set(0);
+		current.set(0, 0);
+	}
+
+	export function next_photo(): PhotoName {
+		if (current.photo.idx < photo_reel.buffer.length - 1) {
+			current.set(current.photo.idx + 1, current.page_idx);
+			return current.photo.name;
+		} else {
+			// if at the end of the current page, try to go to the next page
+			return next_page();
+		}
+	}
+
+	export function next_page(): PhotoName {
+		if (current.page_idx < photo_table.length - 1) {
+			photo_reel.set(current.page_idx + 1);
+			current.set(0, current.page_idx + 1);
+			return current.photo.name;
+		} else {
+			console.log('end of reel');
+			return '';
+		}
+	}
+
+	export function prev_photo(): PhotoName {
+		if (current.photo.idx > 0) {
+			current.set(current.photo.idx - 1, current.page_idx);
+			return current.photo.name;
+		} else {
+			// if at the beginning of the current page, try to go to the previous page
+			return prev_page();
+		}
+	}
+
+	export function prev_page(): PhotoName {
+		if (current.page_idx > 0) {
+			photo_reel.set(current.page_idx - 1);
+			current.set(photo_table[current.page_idx - 1].length - 1, current.page_idx - 1);
+			return current.photo.name;
+		} else {
+			console.log('beginning of reel');
+			return '';
+		}
+	}
+
+	export function goto_page(page_idx: number): PhotoName {
+		if (page_idx >= 0 && page_idx < photo_table.length) {
+			photo_reel.set(page_idx);
+			current.set(0, page_idx);
+			return current.photo.name;
+		} else {
+			console.error(`goto_page(): page_idx ${page_idx} out of bounds`);
+			return '';
+		}
+	}
+
+	// // // internal functions
+
+	function scroll_to_photo(photo_name: PhotoName) {
+		if (photo_name != '') {
+			const photo_node = document.getElementById(photo_name);
+			if (photo_node != null) {
+				photo_node.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+			} else {
+				console.error(`scroll_to_photo(): photo_name '${photo_name}'' not found`);
+			}
+		}
+	}
+
+	async function make_thumbnail(photo_name: PhotoName, max_size: number) {
+		const src_url = convertFileSrc(dir + photo_name);
+		const blob = await fetch(src_url).then((r) => r.blob());
+		const thumbnail = await reducer.toBlob(blob, { max: max_size });
+		return URL.createObjectURL(thumbnail);
+	}
+
+	function lazy_load(img: HTMLImageElement, photo_name: PhotoName) {
+		const lazy_load_opts = {
+			root: null,
+			rootMargin: '0px',
+			threshold: 0,
+		};
+
+		const loaded = () => {
+			img.style.opacity = '1'; // REPL hack to apply loading animation
+
+			// if image is first in reel, add selected class
+			// this is workaround for the bug where the first image in the reel does not get the selected class immediately
+			// if (img.id === current.photo.name && !img.classList.contains('selected') && current.photo.idx === 0) {
+			// 	img.classList.add('selected');
+			// }
+		};
+		const observer = new IntersectionObserver((entries) => {
+			if (entries[0].isIntersecting) {
+				make_thumbnail(photo_name, 150).then((url) => {
+					img.src = url;
+				});
+
+				if (img.complete) {
+					// check if instantly loaded
+					loaded();
+				} else {
+					img.addEventListener('load', loaded); // if the image isn't loaded yet, add an event listener
+				}
+			}
+		}, lazy_load_opts);
+		observer.observe(img); // intersection observer
+
+		return {
+			destroy() {
+				img.removeEventListener('load', loaded); // clean up the event listener
+			},
+		};
+	}
+
+	function handle_photo_click(event: MouseEvent) {
+		// the id of the element is the photo_name
+		const photo_name = (event.target as HTMLImageElement).id;
+		current.set(photo_table[current.page_idx].indexOf(photo_name), current.page_idx);
+	}
+
+	// // // lifecycle
+
+	onMount(() => {
+		reel_node.addEventListener('wheel', (event) => {
+			if (!event.deltaY) {
+				return;
+			} else if (Math.abs(event.deltaY) < 20) {
+				// ignore small movements, like trackpad scrolling
+				return;
+			}
+
+			//@ts-ignore - .scrollLeft IS a property of currentTarget
+			event.currentTarget.scrollLeft += event.deltaY + event.deltaX;
+			event.preventDefault();
+		});
+	});
+</script>
+
+<div bind:this={reel_node} class="reel">
+	<div class="scroll-item">
+		<div class="pad">
+			<!-- <p>photo reel is {photo_reel}</p> -->
+		</div>
+	</div>
+
+	{#each photo_reel.buffer as photo_name}
+		<div class="scroll-item">
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+			<!-- svelte-ignore a11y-missing-attribute -->
+			<img id={photo_name} use:lazy_load={photo_name} on:click={handle_photo_click} />
+		</div>
+	{/each}
+
+	<div class="scroll-item">
+		<div class="pad" />
+	</div>
+
+	<!-- <div id="center-marker" /> -->
+</div>
+
+<style lang="scss">
+	div.reel {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		// justify-content: center;
+		scroll-behavior: smooth;
+		align-items: center;
+
+		background-color: rgba(40, 40, 40, 1);
+		height: 200px;
+		width: 100%;
+		flex-wrap: nowrap;
+		overflow-x: scroll;
+		overflow-y: hidden;
+		// height: 100vh;
+		// width: 100vw;
+		background-color: rgba(32, 32, 32, 0.7);
+
+		scroll-snap-type: x mandatory;
+
+		::-webkit-scrollbar {
+			width: 0;
+			display: none;
+		}
+
+		.scroll-item {
+			// border: 1px solid gray;
+		}
+
+		.pad {
+			width: calc(50vw - 75px - 20px);
+			// margin: 0 20px;
+			height: 200px;
+			background-color: rgba(16, 16, 16, 0.2);
+		}
+
+		img {
+			max-height: 150px;
+			max-width: 150px;
+			object-fit: cover;
+			scroll-snap-align: center;
+			cursor: pointer;
+			margin: 0 20px;
+			image-rendering: optimizeSpeed;
+			transition: height 0.2s ease-in-out;
+		}
+
+		#center-marker {
+			position: absolute;
+			left: 50vw;
+			width: 1px;
+			height: 200px;
+			border: 1px solid white;
+		}
+	}
+
+	:global(.selected) {
+		border: 1px solid white;
+	}
+</style>

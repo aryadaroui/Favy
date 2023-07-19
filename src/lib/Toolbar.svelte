@@ -17,7 +17,7 @@
 </script>
 
 <div id="toolbar">
-	<div class="group">
+	<div class="group flex-start">
 		<button id="choose-dir" on:click={choose_dir}>Choose folder</button>
 		<button id="filter">Filter</button>
 		<button id="export">Export</button>
@@ -25,7 +25,7 @@
 		<p>{$current_photo.photo_name}</p>
 	</div>
 
-	<div class="group">
+	<div class="group flex-center">
 		<button id="heart">❌</button>
 		<div class="spacer" />
 		<button id="star-1">⭐️</button>
@@ -35,21 +35,23 @@
 		<button id="heart">❤️</button>
 	</div>
 
-	<p>{$status}</p>
-	<div class="spacer" />
-	<button id="center" on:click={center}>Center</button>
-	<button id="center" >Page</button>
-	<button id="settings" on:click={settings}>Settings</button>
+	<div class="group flex-end">
+		<p>{$status}</p>
+		<div class="spacer" />
+		<button id="center" on:click={center}>Center</button>
+		<button id="center">Page</button>
+		<button id="settings" on:click={settings}>Settings</button>
+	</div>
 </div>
 
 <style lang="scss">
 	div#toolbar {
 		display: flex;
 		flex-direction: row;
-		justify-content: flex-start;
+		justify-content: space-between;
 		align-items: center;
 		height: 30px;
-		width: calc(100vw - 2px);
+		width: 100vw;
 		background-color: rgba(37, 37, 37, 1);
 
 		button {
@@ -69,17 +71,31 @@
 		}
 	}
 
-	div.group {
+	.group {
 		display: flex;
 		flex-direction: row;
-		justify-content: flex-start;
+		flex-grow: 1;
+		// justify-content: center;
+		// justify-content: flex-start;
 		align-items: center;
 		height: 30px;
-		width: calc(100vw - 2px);
+		// width: calc(100vw - 2px);
 		background-color: rgba(37, 37, 37, 1);
 	}
 
-	div.spacer {
+	.flex-start {
+		justify-content: flex-start;
+	}
+
+	.flex-end {
+		justify-content: flex-end;
+	}
+
+	.center {
+		justify-content: center;
+	}
+
+	.spacer {
 		width: 2%;
 		max-width: 10px;
 	}

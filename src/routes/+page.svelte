@@ -8,6 +8,7 @@
 	import ImageViewer from '$lib/ImageViewer.svelte';
 	import Toolbar from '$lib/Toolbar.svelte';
 	import Reel from '$lib/Reel.svelte';
+	import NewReel from '$lib/NewReel.svelte';
 	import { workspace_dir, photo_names, photo_map, current_photo } from '$lib/stores';
 
 	// let $workspace_dir: string;
@@ -15,7 +16,8 @@
 	// let img_idx: number = 0;
 
 	let image_viewer: ImageViewer;
-	let reel: Reel;
+	// let reel: Reel;
+	let reel: NewReel;
 
 	async function choose_dir() {
 		open({
@@ -57,7 +59,8 @@
 				// const path_str = convertFileSrc(files[img_idx].path);
 				image_viewer.set_image($current_photo.photo_name);
 
-				reel.set($photo_names.filter(filter));
+				// reel.set($photo_names.filter(filter));
+				reel.set($workspace_dir, $photo_names.filter(filter), 8);
 			} else {
 			}
 		});
@@ -92,7 +95,7 @@
 	}
 
 	function next() {
-		let next_photo = reel.next();
+		let next_photo = reel.next_photo();
 
 		if (next_photo != '') {
 			update_current_photo_by_name(next_photo);
@@ -102,7 +105,7 @@
 	}
 
 	function prev() {
-		let prev_photo = reel.prev();
+		let prev_photo = reel.prev_photo();
 
 		if (prev_photo != '') {
 			update_current_photo_by_name(prev_photo);
@@ -146,8 +149,12 @@
 		}}
 		settings={open_settings} />
 
-	<div id="reel">
+	<!-- <div id="reel">
 		<Reel bind:this={reel} parent_updater={update_current_photo_by_name} />
+	</div> -->
+
+	<div>
+	<NewReel bind:this={reel} on_current_photo_change={update_current_photo_by_name} />
 	</div>
 </main>
 

@@ -3,7 +3,9 @@
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import ImageBlobReduce from 'image-blob-reduce';
 	import { workspace_dir, status, settings } from '$lib/stores';
-	import { tick } from 'svelte';
+	import { tick, createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	let reel_node: HTMLDivElement;
 	let filtered_photo_names: string[] = [];
@@ -14,8 +16,6 @@
 
 	let page_idx: number = 0;
 	let num_pages: number = 0;
-
-	export let asdf = 0;
 
 	function set_reel_idx(idx: number) {
 		document.getElementById(photo_reel[reel_idx])?.classList.remove('selected');
@@ -183,6 +183,9 @@
 
 	{#each photo_reel as photo_name}
 		<div class="scroll-item">
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+			<!-- svelte-ignore a11y-missing-attribute -->
 			<img id={photo_name} use:lazy_load={photo_name} on:click={photo_on_click} />
 		</div>
 	{/each}

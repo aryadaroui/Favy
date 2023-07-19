@@ -140,7 +140,9 @@
 		-webkit-user-drag: none;
 		height: 100%;
 		width: auto;
-		image-rendering: optimizeSpeed;
+		image-orientation: none;
+		// image-rendering: optimizeQuality;
+		// image-rendering: optimizeSpeed;
 
 		translate: translate(0px, 100px);
 

@@ -21,10 +21,7 @@ vite.config.ts.timestamp-*
 !.vscode/extensions.json
 
 # testing
-*Test data*
-*Test_data*
-*test data*
-*test_data*
+*test*
 *playground*
 *.jpg
 

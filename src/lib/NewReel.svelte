@@ -4,12 +4,13 @@
 	import ImageBlobReduce from 'image-blob-reduce';
 	import { status } from '$lib/stores';
 
-	//TODO: need an evernt dispatch on lazy load done
+	// TODO: need an evernt dispatch on lazy load done
+	// TODO: need to add init .src image so it doesnt constantly re-fetch thumbnails
 
 	const ThumbProcessor = {
-		RUST_SIMD: 'RUST_SIMD', //
-		WEB_CANVAS: 'WEB_CANVAS', // abstraction over GPU
-		NODE_SHARP: 'NODE_SHARP', // utilizes more cores
+		NODE_SHARP: 'NODE_SHARP', // leverages multi-core
+		WEB_CANVAS: 'WEB_CANVAS', // leverages GPU
+		// RUST_SIMD: 'RUST_SIMD', // leverages CPU-SIMD
 	};
 	const thumb_processor = ThumbProcessor.NODE_SHARP;
 
@@ -150,13 +151,6 @@
 
 	async function make_thumbnail(photo_name: PhotoName, max_size: number) {
 		switch (thumb_processor) {
-			case ThumbProcessor.WEB_CANVAS:
-				const blob = await fetch(convertFileSrc(dir + photo_name)).then((r) => r.blob());
-				const thumbnail = await reducer.toBlob(blob, { max: max_size });
-				return URL.createObjectURL(thumbnail);
-			// case ThumbProcessor.RUST_SIMD:
-			// 	break;
-
 			case ThumbProcessor.NODE_SHARP:
 				const response = await fetch('/make-thumb', {
 					method: 'POST',
@@ -164,8 +158,16 @@
 					body: JSON.stringify({ src_url: dir + photo_name, max_size: max_size }),
 				});
 				const { thumb_base64 } = await response.json();
-
 				return 'data:image/jpeg;base64,' + thumb_base64;
+
+			case ThumbProcessor.WEB_CANVAS:
+				const blob = await fetch(convertFileSrc(dir + photo_name)).then((r) => r.blob());
+				const thumbnail = await reducer.toBlob(blob, { max: max_size });
+				return URL.createObjectURL(thumbnail);
+
+			// case ThumbProcessor.RUST_SIMD:
+			// 	break;
+
 			default:
 				throw new Error(`make_thumbnail(): unknown thumb_processor ${thumb_processor}`);
 		}

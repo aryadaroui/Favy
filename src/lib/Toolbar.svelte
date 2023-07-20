@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Heart from '$lib/Heart.svelte';
+	import Xcross from './Xcross.svelte';
 	import { current_photo, status } from '$lib/stores';
 
 	export let choose_dir: () => void;
@@ -26,13 +28,15 @@
 	</div>
 
 	<div class="group center">
-		<button id="heart">❌</button>
+		<!-- <button id="heart">❌</button> -->
+		<Xcross fill_color="none" />
 		<div class="spacer" />
 		<button id="star-1">⭐️</button>
 		<button id="star-2">⭐️</button>
 		<button id="star-3">⭐️</button>
 		<div class="spacer" />
-		<button id="heart">❤️</button>
+		<Heart fill_color="none" />
+		<!-- <button id="heart">❤️</button> -->
 	</div>
 
 	<div class="group flex-end">

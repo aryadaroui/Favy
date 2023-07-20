@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Heart from '$lib/Heart.svelte';
+	import Star from './Star.svelte';
 	import Xcross from './Xcross.svelte';
+	import Center from './Center.svelte';
 	import { current_photo, status } from '$lib/stores';
 
 	export let choose_dir: () => void;
@@ -28,21 +30,34 @@
 	</div>
 
 	<div class="group center">
-		<!-- <button id="heart">❌</button> -->
-		<Xcross fill_color="none" />
+		<button>
+			<Xcross fill_color="none" />
+		</button>
 		<div class="spacer" />
-		<button id="star-1">⭐️</button>
-		<button id="star-2">⭐️</button>
-		<button id="star-3">⭐️</button>
+		<button>
+			<Star fill_color="gray" />
+		</button>
+		<button>
+			<Star fill_color="gray" />
+		</button>
+		<button>
+			<Star fill_color="none" />
+		</button>
 		<div class="spacer" />
-		<Heart fill_color="none" />
-		<!-- <button id="heart">❤️</button> -->
+		<button>
+			<Heart />
+		</button>
 	</div>
 
 	<div class="group flex-end">
 		<p>{$status}</p>
 		<div class="spacer" />
-		<button id="center" on:click={center}>Center</button>
+
+		<button on:click={center}>
+			<Center fill_color="none" />
+		</button>
+
+		<!-- <button id="center" on:click={center}>Center</button> -->
 		<button id="center">Goto</button>
 		<button id="settings" on:click={settings}>Settings</button>
 	</div>
@@ -56,15 +71,45 @@
 		align-items: center;
 		height: 30px;
 		width: 100vw;
+		padding: 4px;
 		background-color: rgba(37, 37, 37, 1);
 
 		button {
-			max-width: 200px;
-			height: 28px;
+			height: 24;
+			width: 24;
+
+			background-color: rgba(0, 0, 0, 0);
+			border: none;
+			border-radius: 8px;
+			align-items: center;
+			justify-content: center;
+
+			// max-width: 200px;
+			// height: 28px;
 			user-select: none;
 			-webkit-user-select: none;
 			-webkit-user-drag: none;
+
+			transition: background-color 0.15s ease-in-out;
+
+			color: rgb(150, 150, 150);
+			color: rgb(255, 130, 192);
+
+			&:hover {
+				background-color: rgba(127, 127, 127, 0.2);
+				// color: rgb(200, 200, 200);
+				cursor: pointer;
+				transition: background-color 0.15s ease-in-out;
+			}
+
+			&:active {
+				background-color: rgba(127, 127, 127, 0.5);
+				// color: rgb(222, 222, 222);
+				// color: rgb(255, 130, 192);
+				transition: background-color 0.1s ease-in-out;
+			}
 		}
+
 		p {
 			font-family: sans-serif;
 			color: #aaa;

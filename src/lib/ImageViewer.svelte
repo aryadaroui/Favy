@@ -32,7 +32,8 @@
 
 	onMount(() => {
 		// img_node.src = src;
-		img_node.src = '/untitled.jpg';
+		// img_node.src = '/untitled.jpg';
+		
 
 		img_node.addEventListener('transitionend', () => {
 			img_node.style.transition = '';

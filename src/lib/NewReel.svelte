@@ -173,41 +173,37 @@
 		}
 	}
 
-	function lazy_load(img: HTMLImageElement, photo_name: PhotoName) {
-		const lazy_load_opts = {
+	const observer = new IntersectionObserver(
+		(entries) => {
+			for (let i = 0; i < entries.length; i++) {
+				const entry = entries[i];
+				if (entry.isIntersecting) {
+					const img = entry.target as HTMLImageElement;
+
+					img.addEventListener('load', (event) => {
+						if (img.id == current.photo.name) {
+							img.classList.add('selected');
+							scroll_to_photo(current.photo.name);
+						}
+						observer.unobserve(img); // stop observing this image
+						img.removeEventListener('load', () => {});
+					});
+
+					make_thumbnail(img.id, 150).then((url) => {
+						img.src = url;
+					});
+				}
+			}
+		},
+		{ // this is ugly. TODO: clean up
 			root: null,
 			rootMargin: '0px',
 			threshold: 0,
-		};
+		},
+	);
 
-		const loaded = () => {
-			img.style.opacity = '1'; // REPL hack to apply loading animation
-			if (img.id == current.photo.name) {
-				img.classList.add('selected');
-				scroll_to_photo(current.photo.name);
-			}
-		};
-		const observer = new IntersectionObserver((entries) => {
-			if (entries[0].isIntersecting) {
-				make_thumbnail(photo_name, 150).then((url) => {
-					img.src = url;
-				});
-
-				if (img.complete) {
-					// check if instantly loaded
-					loaded();
-				} else {
-					img.addEventListener('load', loaded); // if the image isn't loaded yet, add an event listener
-				}
-			}
-		}, lazy_load_opts);
+	function lazy_load(img: HTMLImageElement) {
 		observer.observe(img); // intersection observer
-
-		return {
-			destroy() {
-				img.removeEventListener('load', loaded); // clean up the event listener
-			},
-		};
 	}
 
 	function handle_photo_click(event: MouseEvent) {
@@ -243,7 +239,7 @@
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 			<!-- svelte-ignore a11y-missing-attribute -->
-			<img id={photo_name} use:lazy_load={photo_name} on:click={handle_photo_click} />
+			<img id={photo_name} use:lazy_load on:click={handle_photo_click} />
 		</div>
 	{/each}
 

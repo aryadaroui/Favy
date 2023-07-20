@@ -7,7 +7,7 @@
 	width="24"
 	height="24"
 	viewBox="0 -1.5 24 24"
-	fill={fill_color}
+
 	stroke={stroke_color}
 	stroke-width="1.5"
 	stroke-linecap="round"

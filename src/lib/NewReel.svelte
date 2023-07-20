@@ -2,10 +2,7 @@
 	import { onMount, tick } from 'svelte';
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import ImageBlobReduce from 'image-blob-reduce';
-	import { current_photo, status } from '$lib/stores';
-
-	// TODO: need an evernt dispatch on lazy load done
-	// TODO: need to add init .src image so it doesnt constantly re-fetch thumbnails
+	import { status } from '$lib/stores';
 
 	const ThumbProcessor = {
 		NODE_SHARP: 'NODE_SHARP', // leverages multi-core
@@ -163,6 +160,8 @@
 			case ThumbProcessor.WEB_CANVAS:
 				const blob = await fetch(convertFileSrc(dir + photo_name)).then((r) => r.blob());
 				const thumbnail = await reducer.toBlob(blob, { max: max_size });
+				// TODO: this potentially makes more and more URLs if the user returns to the same photo.
+				// should implement a cache for this
 				return URL.createObjectURL(thumbnail);
 
 			// case ThumbProcessor.RUST_SIMD:
@@ -236,7 +235,6 @@
 				reel_node.scroll({ left: 0, behavior: 'smooth' });
 
 				// TODO: if control key is held, select the first photo in the reel.
-
 			}
 
 			if (event.key == 'ArrowRight' && event.shiftKey) {
@@ -247,6 +245,7 @@
 	});
 </script>
 
+<!-- TODO: Add buttons for previous and next pages into the pad -->
 <div bind:this={reel_node} class="reel">
 	<div class="scroll-item">
 		<div class="pad" />

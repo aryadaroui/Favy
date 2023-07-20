@@ -2,7 +2,7 @@
 	import { onMount, tick } from 'svelte';
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import ImageBlobReduce from 'image-blob-reduce';
-	import { status } from '$lib/stores';
+	import { current_photo, status } from '$lib/stores';
 
 	// TODO: need an evernt dispatch on lazy load done
 	// TODO: need to add init .src image so it doesnt constantly re-fetch thumbnails
@@ -144,7 +144,7 @@
 			if (photo_node != null) {
 				photo_node.scrollIntoView({ behavior: 'smooth', inline: 'center' });
 			} else {
-				console.error(`scroll_to_photo(): photo_name '${photo_name}'' not found`);
+				// console.error(`scroll_to_photo(): photo_name '${photo_name}'' not found`);
 			}
 		}
 	}
@@ -181,10 +181,6 @@
 					const img = entry.target as HTMLImageElement;
 
 					img.addEventListener('load', (event) => {
-						if (img.id == current.photo.name) {
-							img.classList.add('selected');
-							scroll_to_photo(current.photo.name);
-						}
 						observer.unobserve(img); // stop observing this image
 						img.removeEventListener('load', () => {});
 					});
@@ -195,7 +191,8 @@
 				}
 			}
 		},
-		{ // this is ugly. TODO: clean up
+		{
+			// this is ugly. TODO: clean up
 			root: null,
 			rootMargin: '0px',
 			threshold: 0,
@@ -204,6 +201,11 @@
 
 	function lazy_load(img: HTMLImageElement) {
 		observer.observe(img); // intersection observer
+
+		if (img.id == current.photo.name) {
+			img.classList.add('selected');
+			scroll_to_photo(current.photo.name);
+		}
 	}
 
 	function handle_photo_click(event: MouseEvent) {
@@ -215,6 +217,7 @@
 	// // // lifecycle
 
 	onMount(() => {
+		// debugger
 		reel_node.addEventListener('wheel', (event) => {
 			if (!event.deltaY) {
 				return;
@@ -225,6 +228,21 @@
 			//@ts-ignore - .scrollLeft IS a property of currentTarget
 			event.currentTarget.scrollLeft += event.deltaY + event.deltaX;
 			event.preventDefault();
+		});
+
+		// add event listener for shift left
+		window.addEventListener('keydown', (event) => {
+			if (event.key == 'ArrowLeft' && event.shiftKey) {
+				reel_node.scroll({ left: 0, behavior: 'smooth' });
+
+				// TODO: if control key is held, select the first photo in the reel.
+
+			}
+
+			if (event.key == 'ArrowRight' && event.shiftKey) {
+				reel_node.scroll({ left: reel_node.scrollWidth - reel_node.clientWidth, behavior: 'smooth' });
+				// TODO: if control key is held, select the select photo in the reel.
+			}
 		});
 	});
 </script>
@@ -287,12 +305,15 @@
 		img {
 			max-height: 150px;
 			max-width: 150px;
+			min-width: 100px;
+			min-height: 100px;
 			object-fit: cover;
 			scroll-snap-align: center;
 			cursor: pointer;
 			margin: 0 20px;
 			image-rendering: optimizeSpeed;
 			border: 1px solid transparent;
+			transition: all 0.4s ease-in;
 			// transition: border 0.4s ease-in; // laggy
 		}
 
@@ -307,6 +328,7 @@
 
 	:global(.selected) {
 		border: 1px solid white !important;
+		transition: all 0.4s ease-out;
 		// transition: border 0.4s ease-out;
 	}
 </style>

@@ -1,8 +1,16 @@
 <script lang="ts">
-	import Heart from '$lib/Heart.svelte';
-	import Star from './Star.svelte';
-	import Xcross from './Xcross.svelte';
-	import Center from './Center.svelte';
+	import Folder from '$lib/icons/Folder.svelte';
+	import Filter from '$lib/icons/Filter.svelte';
+	import BoxArrowUp from '$lib/icons/BoxArrowUp.svelte';
+
+	import Xcross from '$lib/icons/Xcross.svelte';
+	import Star from '$lib/icons/Star.svelte';
+	import Heart from '$lib/icons/Heart.svelte';
+
+	import Center from '$lib/icons/Center.svelte';
+	import Crosshair from '$lib/icons/Crosshair.svelte';
+	import Cog from '$lib/icons/Cog.svelte';
+
 	import { current_photo, status } from '$lib/stores';
 	import { onMount } from 'svelte';
 
@@ -106,9 +114,16 @@
 
 <div id="toolbar">
 	<div class="group flex-start">
-		<button id="choose-dir" on:click={choose_dir}>Choose folder</button>
-		<button id="filter">Filter</button>
-		<button id="export">Export</button>
+		<button on:click={choose_dir}>
+			<Folder />
+		</button>
+		<button id="filter">
+			<Filter />
+		</button>
+
+		<button>
+			<BoxArrowUp />
+		</button>
 		<div class="spacer" />
 		<p>{$current_photo.photo_name}</p>
 	</div>
@@ -142,9 +157,13 @@
 			<Center fill_color="none" />
 		</button>
 
-		<!-- <button id="center" on:click={center}>Center</button> -->
-		<button id="center">Goto</button>
-		<button id="settings" on:click={settings}>Settings</button>
+		<button>
+			<Crosshair />
+		</button>
+
+		<button on:click={settings}>
+			<Cog />
+		</button>
 	</div>
 </div>
 
@@ -154,9 +173,10 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		height: 30px;
-		width: 100vw;
-		padding: 4px;
+		// height: 30px;
+		width: calc(100% - 8px);
+		padding: 6px 4px;
+		// padding-right: 20px;
 		background-color: rgba(37, 37, 37, 1);
 	}
 
@@ -187,7 +207,7 @@
 			background-color: rgba(127, 127, 127, 0.2);
 			// color: rgb(200, 200, 200);
 			cursor: pointer;
-			transition: background-color 0.15s ease-in-out;
+			transition: background-color 0.1s ease-in-out;
 		}
 
 		&:active {
@@ -195,6 +215,7 @@
 			// color: rgb(222, 222, 222);
 			// color: rgb(255, 130, 192);
 			transition: background-color 0.1s ease-in-out;
+			transform: scale(0.9);
 		}
 	}
 

@@ -1,13 +1,11 @@
 <script lang="ts">
-	export let stroke_color = 'gray';
-	export let fill_color = 'gray';
+	export let stroke_color = 'currentColor';
 </script>
 
 <svg
 	width="24"
 	height="24"
 	viewBox="-1 -1.5 18 18"
-	fill={fill_color}
 	stroke={stroke_color}
 	stroke-width="1.5"
 	stroke-linecap="round"

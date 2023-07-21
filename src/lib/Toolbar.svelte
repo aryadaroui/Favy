@@ -10,18 +10,34 @@
 
 	let loved: boolean = false;
 	let hated: boolean = false;
+	let starred_1 = false;
+	let starred_2 = false;
+	let starred3 = false;
 
-	let star_1 = false;
-	let star_2 = false;
-	let star_3 = false;
+	let love = {
+		val: 0,
+		set(val: number) {
+			this.val = val;
+			if (val == 0) {
+				loved = false;
+				hated = false;
+			} else if (val == 1) {
+				loved = true;
+				hated = false;
+			} else if (val == -1) {
+				loved = false;
+				hated = true;
+			}
+		},
+	};
 
 	let rating = {
 		val: 0,
 		set(val: number) {
 			this.val = val;
-			star_1 = val >= 1;
-			star_2 = val >= 2;
-			star_3 = val >= 3;
+			starred_1 = val >= 1;
+			starred_2 = val >= 2;
+			starred3 = val >= 3;
 		},
 	};
 
@@ -39,15 +55,15 @@
 	export let settings: () => void;
 
 	function heart() {
-		loved = !loved;
+		love.set(love.val == 1 ? 0 : 1);
 	}
 
 	function xcross() {
-		hated = !hated;
+		love.set(love.val == -1 ? 0 : -1);
 	}
 
 	function star1() {
-		if (star_1 == true) {
+		if (starred_1 == true) {
 			rating.set(0);
 		} else {
 			rating.set(1);
@@ -55,7 +71,7 @@
 	}
 
 	function star2() {
-		if (star_2 == true) {
+		if (starred_2 == true) {
 			rating.set(0);
 		} else {
 			rating.set(2);
@@ -63,7 +79,7 @@
 	}
 
 	function star3() {
-		if (star_3 == true) {
+		if (starred3 == true) {
 			rating.set(0);
 		} else {
 			rating.set(3);
@@ -103,13 +119,13 @@
 		</button>
 		<div class="spacer" />
 		<!-- BUG: Svelte can't find `class:star even though it's defined??` -->
-		<button on:click={star1} class:star-selected={star_1 == true} class="star">
+		<button on:click={star1} class:star-selected={starred_1 == true} class="star">
 			<Star />
 		</button>
-		<button on:click={star2} class:star-selected={star_2 == true} class="star">
+		<button on:click={star2} class:star-selected={starred_2 == true} class="star">
 			<Star />
 		</button>
-		<button on:click={star3} class:star-selected={star_3 == true} class="star">
+		<button on:click={star3} class:star-selected={starred3 == true} class="star">
 			<Star />
 		</button>
 		<div class="spacer" />
@@ -165,7 +181,7 @@
 		color: rgb(150, 150, 150);
 		// color: rgb(255, 130, 192);
 
-		fill: rgba(0, 0, 0, 0.0);
+		fill: rgba(0, 0, 0, 0);
 
 		&:hover {
 			background-color: rgba(127, 127, 127, 0.2);

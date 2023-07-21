@@ -8,7 +8,6 @@
 	import ImageViewer from '$lib/ImageViewer.svelte';
 	import Toolbar from '$lib/Toolbar.svelte';
 	import Reel from '$lib/Reel.svelte';
-	import NewReel from '$lib/NewReel.svelte';
 	import { workspace_dir, photo_names, photo_map, current_photo } from '$lib/stores';
 
 	// let $workspace_dir: string;
@@ -17,7 +16,7 @@
 
 	let image_viewer: ImageViewer;
 	// let reel: Reel;
-	let reel: NewReel;
+	let reel: Reel;
 
 	async function choose_dir() {
 		open({
@@ -149,12 +148,8 @@
 		}}
 		settings={open_settings} />
 
-	<!-- <div id="reel">
-		<Reel bind:this={reel} parent_updater={update_current_photo_by_name} />
-	</div> -->
-
 	<div>
-	<NewReel bind:this={reel} on_current_photo_change={update_current_photo_by_name} />
+	<Reel bind:this={reel} on_current_photo_change={update_current_photo_by_name} />
 	</div>
 </main>
 

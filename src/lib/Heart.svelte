@@ -1,6 +1,5 @@
 <script lang="ts">
 	export let stroke_color = 'currentColor';
-	export let fill_color = 'currentColor';
 </script>
 
 <svg

@@ -110,7 +110,7 @@
 	}
 
 	onMount(() => {
-		// add keyboard shortcuts for ` 1 2 3 4
+		// TODO: need flag for if any window or menu is focused, e.g. goto menu, settings menu, filter menu, etc.
 		document.addEventListener('keydown', (event) => {
 			if (event.key == '`') {
 				xcross_down = true;
@@ -221,7 +221,12 @@
 		</button>
 		<div class="goto-menu-hitbox hover-menu-hitbox">
 			<div class="hover-menu">
-				<p>Goto stuff!</p>
+				<p>Go to</p>
+
+				photo #:<input type="text" />
+				page #: <input type="text" />
+				<hr />
+				filename:<input type="text" />
 			</div>
 		</div>
 
@@ -232,22 +237,6 @@
 </div>
 
 <style lang="scss">
-	.goto-button {
-		&:hover + .hover-menu-hitbox {
-			visibility: visible;
-			opacity: 1;
-			filter: blur(0px);
-			transform: translateY(-8px);
-			transition: all 0.15s ease-in-out;
-		}
-	}
-
-	.goto-menu-hitbox {
-		position: absolute;
-		right: 30px;
-		bottom: 236px;
-	}
-
 	.hover-menu {
 		border-radius: 16px;
 		width: 200px;
@@ -258,10 +247,6 @@
 		-webkit-backdrop-filter: blur(12px);
 		border: 1px solid rgba(255, 255, 255, 0.25);
 		box-shadow: 0px 8px 18px 0px rgba(0, 0, 0, 0.5);
-
-		// opacity: 0.0;
-		// transition: all 2.15s ease-out;
-
 		padding: 0 1em;
 	}
 
@@ -270,55 +255,34 @@
 		visibility: hidden;
 		opacity: 0;
 		transition: all 0.15s ease-in-out;
-		// border: 1px solid pink;
-
-		&:hover {
-			visibility: visible;
-			opacity: 1;
-			filter: blur(0px);
-			transform: translateY(-8px);
-			transition: all 0.15s ease-in-out;
-		}
-	}
-
-	.filter-menu {
 		border-radius: 16px;
-		width: 200px;
-		height: 200px;
-		background-color: rgba(2, 2, 2, 0.5);
-		z-index: 1; /* make sure the div is above other elements */
-		overflow: hidden;
-		-webkit-backdrop-filter: blur(12px);
-		border: 1px solid rgba(255, 255, 255, 0.25);
-		box-shadow: 0px 8px 18px 0px rgba(0, 0, 0, 0.5);
+		padding: 2em 1em 1em 1em;
 
-		// opacity: 0.0;
-		// transition: all 2.15s ease-out;
-
-		padding: 0 1em;
-	}
-
-	.filter-menu-hitbox {
-		position: absolute;
-		left: 30px;
-		bottom: 228px;
-		border-radius: 32px;
-		padding: 10px 14px;
-		// display: none;
-		filter: blur(9px);
-		// transform: translate(0px, 0px);
-		visibility: hidden;
-		opacity: 0;
-		transition: all 0.15s ease-in-out;
 		// border: 1px solid pink;
 
 		&:hover {
 			visibility: visible;
 			opacity: 1;
 			filter: blur(0px);
-			transform: translateY(-8px);
+			transform: translateY(-12px);
 			transition: all 0.15s ease-in-out;
 		}
+	}
+
+	.goto-button {
+		&:hover + .hover-menu-hitbox {
+			visibility: visible;
+			opacity: 1;
+			filter: blur(0px);
+			transform: translateY(-12px);
+			transition: all 0.15s ease-in-out;
+		}
+	}
+
+	.goto-menu-hitbox {
+		position: absolute;
+		right: 30px;
+		bottom: 220px;
 	}
 
 	.filter-button {
@@ -326,9 +290,15 @@
 			visibility: visible;
 			opacity: 1;
 			filter: blur(0px);
-			transform: translateY(-8px);
+			transform: translateY(-12px);
 			transition: all 0.15s ease-in-out;
 		}
+	}
+
+	.filter-menu-hitbox {
+		position: absolute;
+		left: 30px;
+		bottom: 220px;
 	}
 
 	.filter-selected {
@@ -484,5 +454,17 @@
 	.spacer {
 		width: 2%;
 		max-width: 10px;
+	}
+
+	hr {
+		border: 1px solid rgba(255, 255, 255, 0.2);
+	}
+
+	input {
+		background-color: transparent;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 0.2em;
+		color: gray;
+		width: 10em;
 	}
 </style>

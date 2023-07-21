@@ -7,6 +7,9 @@
 	import Star from '$lib/icons/Star.svelte';
 	import Heart from '$lib/icons/Heart.svelte';
 
+	import Photo from '$lib/icons/Photo.svelte';
+	import Papers from '$lib/icons/Papers.svelte';
+
 	import Center from '$lib/icons/Center.svelte';
 	import Crosshair from '$lib/icons/Crosshair.svelte';
 	import Cog from '$lib/icons/Cog.svelte';
@@ -209,11 +212,17 @@
 	</div>
 
 	<div class="group flex-end">
-		<p>{$status}</p>
+
+			{#if $status.text != ''}
+				<p>{$status.text}</p>
+			{:else}
+			<span style="margin-right: 3px;"><Photo /> </span><p> {$status.reel.idx} / {$status.reel.len}</p> &nbsp; – &nbsp; <span><Papers /></span> <p>{$status.page.idx} / {$status.page.len}</p>
+			{/if}
+
 		<div class="spacer" />
 
 		<button on:click={center}>
-			<Center fill_color="none" />
+			<Center />
 		</button>
 
 		<button class="goto-button">
@@ -322,7 +331,10 @@
 		width: calc(100% - 8px);
 		padding: 6px 4px;
 		// padding-right: 20px;
-		background-color: rgba(37, 37, 37, 1);
+		background-color: rgba(16, 16, 16, 1);
+
+		border-top: 1px solid rgba(0, 0, 0, 0.5);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.5);
 	}
 
 	button {
@@ -343,7 +355,7 @@
 
 		transition: all 0.15s ease-in-out;
 
-		color: rgb(150, 150, 150);
+		color: #bbb;
 		// color: rgb(255, 130, 192);
 
 		fill: rgba(0, 0, 0, 0);
@@ -351,6 +363,7 @@
 		&:hover {
 			background-color: rgba(127, 127, 127, 0.2);
 			// color: rgb(200, 200, 200);
+			color: #eee;
 			cursor: pointer;
 			transition: background-color 0.1s ease-in-out;
 		}
@@ -423,11 +436,15 @@
 
 	p {
 		font-family: sans-serif;
-		color: #aaa;
+		color: #777;
 		user-select: none;
 		-webkit-user-select: none;
 		-webkit-user-drag: none;
 		cursor: default;
+	}
+
+	span {
+		color: #777;
 	}
 
 	.group {
@@ -436,7 +453,7 @@
 		flex-grow: 1;
 		align-items: center;
 		height: 30px;
-		background-color: rgba(37, 37, 37, 1);
+		// background-color: rgba(37, 37, 37, 1);
 	}
 
 	.flex-start {

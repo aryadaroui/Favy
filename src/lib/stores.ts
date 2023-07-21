@@ -60,6 +60,18 @@ const initial_filter: Filter = {
 	},
 };
 
+const initial_status = {
+	reel: {
+		idx: 0,
+		len: 0,
+	},
+	page: {
+		idx: 0,
+		len: 0,
+	},
+	text:' '
+}
+
 
 export const workspace_dir = writable('');
 export const photo_names = writable([] as PhotoName[]);
@@ -67,7 +79,7 @@ export const photo_map = writable(new Map<PhotoName, PhotoInfo>());
 export const current_photo = writable({ photo_name: '', idx: 0 });
 
 export const filter = writable(initial_filter);
-export const status = writable('ready');
+export const status = writable(initial_status);
 
 export const settings = writable(initial_settings);
 

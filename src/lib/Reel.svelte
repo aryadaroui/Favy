@@ -59,9 +59,13 @@
 
 			on_current_photo_change(current.photo.name);
 			scroll_to_photo(current.photo.name);
-			$status = `🌌 ${current.photo.idx + 1}/${photo_table[current.page_idx].length}, 📑 ${current.page_idx + 1}/${
-				photo_table.length
-			}`;
+
+				$status.reel.idx = current.photo.idx + 1;
+				$status.reel.len = photo_table[current.page_idx].length;
+				$status.page.idx = current.page_idx + 1;
+				$status.page.len = photo_table.length;
+				$status.text = ''
+
 			document.getElementById(current.photo.name)?.classList.add('selected');
 		},
 	};
@@ -327,7 +331,6 @@
 
 	:global(.selected) {
 		border: 1px solid white !important;
-		transition: all 0.1s ease-out;
-		// transition: border 0.4s ease-out;
+		// transition: all 0.2s ease-out;
 	}
 </style>

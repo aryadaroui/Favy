@@ -24,6 +24,8 @@
 
 	let filter_selected = false;
 
+	let filter_context: HTMLDivElement;
+
 	let love = {
 		val: 0,
 		set(val: number) {
@@ -69,7 +71,8 @@
 	export let settings: () => void;
 
 	function filter_clicked() {
-		filter_selected = !filter_selected;
+		// filter_selected = !filter_selected;
+		filter_context.focus();
 	}
 
 	function heart_clicked() {
@@ -146,7 +149,13 @@
 		<button on:click={choose_dir}>
 			<Folder />
 		</button>
-		<button on:click={filter_clicked} class:filter-selected={filter_selected}>
+
+		
+		<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+		<div bind:this={filter_context} class="filter-context" tabindex="0">
+			<p>Filter stuff!</p>
+		</div>
+		<button class:filter-selected={filter_selected} on:click={filter_clicked}>
 			<Filter />
 		</button>
 
@@ -158,22 +167,41 @@
 	</div>
 
 	<div class="group center">
-		<button on:click={xcross_clicked} class:xcross-selected={xcross_selected} class:xcross-down={xcross_down} class="xcross">
+		<button
+			class="xcross"
+			class:xcross-down={xcross_down}
+			class:xcross-selected={xcross_selected}
+			on:click={xcross_clicked}>
 			<Xcross />
 		</button>
 		<div class="spacer" />
-		<!-- BUG: Svelte can't find `class:star even though it's defined??` -->
-		<button on:click={star1_clicked} class:star-selected={star1_selected} class:star-down={star1_down} class="star">
+		<button
+			class="star"
+			class:star-down={star1_down}
+			class:star-selected={star1_selected}
+			on:click={star1_clicked}>
 			<Star />
 		</button>
-		<button on:click={star2_clicked} class:star-selected={star2_selected} class:star-down={star2_down} class="star">
+		<button
+			class="star"
+			class:star-down={star2_down}
+			class:star-selected={star2_selected}
+			on:click={star2_clicked}>
 			<Star />
 		</button>
-		<button on:click={star3_clicked} class:star-selected={star3_selected} class:star-down={star3_down} class="star">
+		<button
+			class="star"
+			class:star-down={star3_down}
+			class:star-selected={star3_selected}
+			on:click={star3_clicked}>
 			<Star />
 		</button>
 		<div class="spacer" />
-		<button on:click={heart_clicked} class:heart-selected={hear_selected} class:heart-down={heart_down} class="heart">
+		<button
+			class="heart"
+			class:heart-down={heart_down}
+			class:heart-selected={hear_selected}
+			on:click={heart_clicked}>
 			<Heart />
 		</button>
 	</div>
@@ -197,6 +225,27 @@
 </div>
 
 <style lang="scss">
+	.filter-context {
+		position: absolute;
+		// top: -50px; /* adjust this value to position the div where you want it */
+		left: 48px;
+		bottom: 250px;
+		border-radius: 8px;
+		width: 200px;
+		height: 100px;
+		background-color: rgba(2, 2, 2, 0.2);
+		// backdrop-filter: blur(9px);
+		// border: 1px solid black;
+		z-index: 1; /* make sure the div is above other elements */
+		// visibility: hidden;
+
+		&:focus {
+			visibility: visible !important;
+			border: 1px solid gray;
+		}
+	}
+
+
 	div#toolbar {
 		display: flex;
 		flex-direction: row;

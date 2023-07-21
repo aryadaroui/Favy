@@ -154,10 +154,9 @@
 
 		<button class="filter-button" class:filter-selected={filter_selected} on:click={filter_clicked}>
 			<Filter />
-
 		</button>
-		<div class="filter-menu-hitbox">
-			<div bind:this={filter_menu} class="filter-menu">
+		<div class="filter-menu-hitbox hover-menu-hitbox">
+			<div bind:this={filter_menu} class="hover-menu">
 				<p>Filter stuff!</p>
 			</div>
 		</div>
@@ -217,9 +216,14 @@
 			<Center fill_color="none" />
 		</button>
 
-		<button>
+		<button class="goto-button">
 			<Crosshair />
 		</button>
+		<div class="goto-menu-hitbox hover-menu-hitbox">
+			<div class="hover-menu">
+				<p>Goto stuff!</p>
+			</div>
+		</div>
 
 		<button on:click={settings}>
 			<Cog />
@@ -228,6 +232,55 @@
 </div>
 
 <style lang="scss">
+	.goto-button {
+		&:hover + .hover-menu-hitbox {
+			visibility: visible;
+			opacity: 1;
+			filter: blur(0px);
+			transform: translateY(-8px);
+			transition: all 0.15s ease-in-out;
+		}
+	}
+
+	.goto-menu-hitbox {
+		position: absolute;
+		right: 30px;
+		bottom: 236px;
+	}
+
+	.hover-menu {
+		border-radius: 16px;
+		width: 200px;
+		height: 200px;
+		background-color: rgba(2, 2, 2, 0.5);
+		z-index: 1; /* make sure the div is above other elements */
+		overflow: hidden;
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.25);
+		box-shadow: 0px 8px 18px 0px rgba(0, 0, 0, 0.5);
+
+		// opacity: 0.0;
+		// transition: all 2.15s ease-out;
+
+		padding: 0 1em;
+	}
+
+	.hover-menu-hitbox {
+		filter: blur(9px);
+		visibility: hidden;
+		opacity: 0;
+		transition: all 0.15s ease-in-out;
+		// border: 1px solid pink;
+
+		&:hover {
+			visibility: visible;
+			opacity: 1;
+			filter: blur(0px);
+			transform: translateY(-8px);
+			transition: all 0.15s ease-in-out;
+		}
+	}
+
 	.filter-menu {
 		border-radius: 16px;
 		width: 200px;
@@ -255,24 +308,23 @@
 		filter: blur(9px);
 		// transform: translate(0px, 0px);
 		visibility: hidden;
-		opacity: 0.0;
+		opacity: 0;
 		transition: all 0.15s ease-in-out;
 		// border: 1px solid pink;
 
 		&:hover {
 			visibility: visible;
-			opacity: 1.0;
+			opacity: 1;
 			filter: blur(0px);
 			transform: translateY(-8px);
 			transition: all 0.15s ease-in-out;
 		}
-
 	}
 
 	.filter-button {
 		&:hover + .filter-menu-hitbox {
 			visibility: visible;
-			opacity: 1.0;
+			opacity: 1;
 			filter: blur(0px);
 			transform: translateY(-8px);
 			transition: all 0.15s ease-in-out;

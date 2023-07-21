@@ -63,7 +63,7 @@
 	}
 
 	function star1() {
-		if (starred_1 == true) {
+		if (rating.val == 1) {
 			rating.set(0);
 		} else {
 			rating.set(1);
@@ -71,7 +71,7 @@
 	}
 
 	function star2() {
-		if (starred_2 == true) {
+		if (rating.val == 2) {
 			rating.set(0);
 		} else {
 			rating.set(2);
@@ -79,7 +79,7 @@
 	}
 
 	function star3() {
-		if (starred3 == true) {
+		if (rating.val == 3) {
 			rating.set(0);
 		} else {
 			rating.set(3);
@@ -176,7 +176,7 @@
 		-webkit-user-select: none;
 		-webkit-user-drag: none;
 
-		transition: background-color 0.15s ease-in-out;
+		transition: all 0.15s ease-in-out;
 
 		color: rgb(150, 150, 150);
 		// color: rgb(255, 130, 192);

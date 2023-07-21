@@ -57,20 +57,24 @@
 	//   export let star_2: () => void;
 	//   export let star_3: () => void;
 
-	// export let filename: string = 'untitled.jpg';
+	let xcross_down = false;
+	let star1_down = false;
+	let star2_down = false;
+	let star3_down = false;
+	let heart_down = false;
 
 	export let center: () => void;
 	export let settings: () => void;
 
-	function heart() {
+	function heart_clicked() {
 		love.set(love.val == 1 ? 0 : 1);
 	}
 
-	function xcross() {
+	function xcross_clicked() {
 		love.set(love.val == -1 ? 0 : -1);
 	}
 
-	function star1() {
+	function star1_clicked() {
 		if (rating.val == 1) {
 			rating.set(0);
 		} else {
@@ -78,7 +82,7 @@
 		}
 	}
 
-	function star2() {
+	function star2_clicked() {
 		if (rating.val == 2) {
 			rating.set(0);
 		} else {
@@ -86,7 +90,7 @@
 		}
 	}
 
-	function star3() {
+	function star3_clicked() {
 		if (rating.val == 3) {
 			rating.set(0);
 		} else {
@@ -98,15 +102,34 @@
 		// add keyboard shortcuts for ` 1 2 3 4
 		document.addEventListener('keydown', (event) => {
 			if (event.key == '`') {
-				xcross();
+				xcross_down = true;
 			} else if (event.key == '1') {
-				star1();
+				star1_down = true;
 			} else if (event.key == '2') {
-				star2();
+				star2_down = true;
 			} else if (event.key == '3') {
-				star3();
+				star3_down = true;
 			} else if (event.key == '4') {
-				heart();
+				heart_down = true;
+			}
+		});
+
+		document.addEventListener('keyup', (event) => {
+			if (event.key == '`') {
+				xcross_clicked();
+				xcross_down = false;
+			} else if (event.key == '1') {
+				star1_clicked();
+				star1_down = false;
+			} else if (event.key == '2') {
+				star2_clicked();
+				star2_down = false;
+			} else if (event.key == '3') {
+				star3_clicked();
+				star3_down = false;
+			} else if (event.key == '4') {
+				heart_clicked();
+				heart_down = false;
 			}
 		});
 	});
@@ -129,22 +152,22 @@
 	</div>
 
 	<div class="group center">
-		<button on:click={xcross} class:xcross-selected={hated} class:xcross>
+		<button on:click={xcross_clicked} class:xcross-selected={hated} class:xcross-down={xcross_down} class="xcross">
 			<Xcross />
 		</button>
 		<div class="spacer" />
 		<!-- BUG: Svelte can't find `class:star even though it's defined??` -->
-		<button on:click={star1} class:star-selected={starred_1 == true} class="star">
+		<button on:click={star1_clicked} class:star-selected={starred_1 == true} class:star-down={star1_down} class="star">
 			<Star />
 		</button>
-		<button on:click={star2} class:star-selected={starred_2 == true} class="star">
+		<button on:click={star2_clicked} class:star-selected={starred_2 == true} class:star-down={star2_down} class="star">
 			<Star />
 		</button>
-		<button on:click={star3} class:star-selected={starred3 == true} class="star">
+		<button on:click={star3_clicked} class:star-selected={starred3 == true} class:star-down={star3_down} class="star">
 			<Star />
 		</button>
 		<div class="spacer" />
-		<button on:click={heart} class:heart-selected={loved} class:heart>
+		<button on:click={heart_clicked} class:heart-selected={loved} class:heart-down={heart_down} class="heart">
 			<Heart />
 		</button>
 	</div>
@@ -226,6 +249,12 @@
 			transition: all 0.1s ease-in-out;
 		}
 	}
+	.heart-down {
+		fill: rgba(255, 130, 192, 0.5) !important;
+		color: rgba(255, 130, 192, 0.5) !important;
+		transform: scale(0.9);
+		transition: all 0.1s ease-in-out;
+	}
 	.heart-selected {
 		fill: rgb(255, 130, 192);
 		color: rgb(255, 130, 192);
@@ -239,6 +268,12 @@
 			transition: all 0.1s ease-in-out;
 		}
 	}
+	.xcross-down {
+		fill: rgba(255, 120, 120, 0.5) !important;
+		color: rgba(255, 120, 120, 0.5) !important;
+		transform: scale(0.9);
+		transition: all 0.1s ease-in-out;
+	}
 	.xcross-selected {
 		fill: rgb(255, 120, 120);
 		color: rgb(255, 120, 120);
@@ -251,6 +286,12 @@
 			color: rgba(255, 230, 120, 0.5);
 			transition: all 0.1s ease-in-out;
 		}
+	}
+	.star-down {
+		fill: rgba(255, 230, 120, 0.5) !important;
+		color: rgba(255, 230, 120, 0.5) !important;
+		transform: scale(0.9);
+		transition: all 0.1s ease-in-out;
 	}
 	.star-selected {
 		fill: rgb(255, 230, 120);

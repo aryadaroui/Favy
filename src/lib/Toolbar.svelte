@@ -11,30 +11,32 @@
 	import Crosshair from '$lib/icons/Crosshair.svelte';
 	import Cog from '$lib/icons/Cog.svelte';
 
-	import { current_photo, status } from '$lib/stores';
+	import { current_photo, filter, status } from '$lib/stores';
 	import { onMount } from 'svelte';
 
 	export let choose_dir: () => void;
 
-	let loved: boolean = false;
-	let hated: boolean = false;
-	let starred_1 = false;
-	let starred_2 = false;
-	let starred3 = false;
+	let hear_selected: boolean = false;
+	let xcross_selected: boolean = false;
+	let star1_selected = false;
+	let star2_selected = false;
+	let star3_selected = false;
+
+	let filter_selected = false;
 
 	let love = {
 		val: 0,
 		set(val: number) {
 			this.val = val;
 			if (val == 0) {
-				loved = false;
-				hated = false;
+				hear_selected = false;
+				xcross_selected = false;
 			} else if (val == 1) {
-				loved = true;
-				hated = false;
+				hear_selected = true;
+				xcross_selected = false;
 			} else if (val == -1) {
-				loved = false;
-				hated = true;
+				hear_selected = false;
+				xcross_selected = true;
 			}
 		},
 	};
@@ -43,9 +45,9 @@
 		val: 0,
 		set(val: number) {
 			this.val = val;
-			starred_1 = val >= 1;
-			starred_2 = val >= 2;
-			starred3 = val >= 3;
+			star1_selected = val >= 1;
+			star2_selected = val >= 2;
+			star3_selected = val >= 3;
 		},
 	};
 
@@ -65,6 +67,10 @@
 
 	export let center: () => void;
 	export let settings: () => void;
+
+	function filter_clicked() {
+		filter_selected = !filter_selected;
+	}
 
 	function heart_clicked() {
 		love.set(love.val == 1 ? 0 : 1);
@@ -140,7 +146,7 @@
 		<button on:click={choose_dir}>
 			<Folder />
 		</button>
-		<button id="filter">
+		<button on:click={filter_clicked} class:filter-selected={filter_selected}>
 			<Filter />
 		</button>
 
@@ -152,22 +158,22 @@
 	</div>
 
 	<div class="group center">
-		<button on:click={xcross_clicked} class:xcross-selected={hated} class:xcross-down={xcross_down} class="xcross">
+		<button on:click={xcross_clicked} class:xcross-selected={xcross_selected} class:xcross-down={xcross_down} class="xcross">
 			<Xcross />
 		</button>
 		<div class="spacer" />
 		<!-- BUG: Svelte can't find `class:star even though it's defined??` -->
-		<button on:click={star1_clicked} class:star-selected={starred_1 == true} class:star-down={star1_down} class="star">
+		<button on:click={star1_clicked} class:star-selected={star1_selected} class:star-down={star1_down} class="star">
 			<Star />
 		</button>
-		<button on:click={star2_clicked} class:star-selected={starred_2 == true} class:star-down={star2_down} class="star">
+		<button on:click={star2_clicked} class:star-selected={star2_selected} class:star-down={star2_down} class="star">
 			<Star />
 		</button>
-		<button on:click={star3_clicked} class:star-selected={starred3 == true} class:star-down={star3_down} class="star">
+		<button on:click={star3_clicked} class:star-selected={star3_selected} class:star-down={star3_down} class="star">
 			<Star />
 		</button>
 		<div class="spacer" />
-		<button on:click={heart_clicked} class:heart-selected={loved} class:heart-down={heart_down} class="heart">
+		<button on:click={heart_clicked} class:heart-selected={hear_selected} class:heart-down={heart_down} class="heart">
 			<Heart />
 		</button>
 	</div>
@@ -239,6 +245,18 @@
 			// color: rgb(255, 130, 192);
 			transition: background-color 0.1s ease-in-out;
 			transform: scale(0.9);
+		}
+	}
+
+	.filter-selected {
+		background-color: rgb(220, 220, 220);
+		color: rgb(32, 32, 32, 0);
+		fill: rgb(32, 32, 32);
+		transition: background-color 0.15s ease-in-out;
+
+		&:hover {
+			background-color: rgb(220, 220, 220, 0.8);
+			transition: background-color 0.1s ease-in-out;
 		}
 	}
 

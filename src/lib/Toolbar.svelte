@@ -16,28 +16,35 @@
 
 	export let choose_dir: () => void;
 
-	let hear_selected: boolean = false;
-	let xcross_selected: boolean = false;
+	let filter_selected = false;
+	let xcross_selected = false;
 	let star1_selected = false;
 	let star2_selected = false;
 	let star3_selected = false;
+	let heart_selected = false;
 
-	let filter_selected = false;
+	let xcross_down = false;
+	let star1_down = false;
+	let star2_down = false;
+	let star3_down = false;
+	let heart_down = false;
 
-	let filter_context: HTMLDivElement;
+	// let filter_menu_open = false;
+
+	let filter_menu: HTMLDivElement;
 
 	let love = {
 		val: 0,
 		set(val: number) {
 			this.val = val;
 			if (val == 0) {
-				hear_selected = false;
+				heart_selected = false;
 				xcross_selected = false;
 			} else if (val == 1) {
-				hear_selected = true;
+				heart_selected = true;
 				xcross_selected = false;
 			} else if (val == -1) {
-				hear_selected = false;
+				heart_selected = false;
 				xcross_selected = true;
 			}
 		},
@@ -61,18 +68,13 @@
 	//   export let star_2: () => void;
 	//   export let star_3: () => void;
 
-	let xcross_down = false;
-	let star1_down = false;
-	let star2_down = false;
-	let star3_down = false;
-	let heart_down = false;
-
 	export let center: () => void;
 	export let settings: () => void;
 
 	function filter_clicked() {
-		// filter_selected = !filter_selected;
-		filter_context.focus();
+		filter_selected = !filter_selected;
+		// filter_menu_open = !filter_menu_open;
+		// filter_menu.focus();
 	}
 
 	function heart_clicked() {
@@ -150,14 +152,15 @@
 			<Folder />
 		</button>
 
-		
-		<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-		<div bind:this={filter_context} class="filter-context" tabindex="0">
-			<p>Filter stuff!</p>
-		</div>
-		<button class:filter-selected={filter_selected} on:click={filter_clicked}>
+		<button class="filter-button" class:filter-selected={filter_selected} on:click={filter_clicked}>
 			<Filter />
+
 		</button>
+		<div class="filter-menu-hitbox">
+			<div bind:this={filter_menu} class="filter-menu">
+				<p>Filter stuff!</p>
+			</div>
+		</div>
 
 		<button>
 			<BoxArrowUp />
@@ -200,7 +203,7 @@
 		<button
 			class="heart"
 			class:heart-down={heart_down}
-			class:heart-selected={hear_selected}
+			class:heart-selected={heart_selected}
 			on:click={heart_clicked}>
 			<Heart />
 		</button>
@@ -225,26 +228,68 @@
 </div>
 
 <style lang="scss">
-	.filter-context {
-		position: absolute;
-		// top: -50px; /* adjust this value to position the div where you want it */
-		left: 48px;
-		bottom: 250px;
-		border-radius: 8px;
+	.filter-menu {
+		border-radius: 16px;
 		width: 200px;
-		height: 100px;
-		background-color: rgba(2, 2, 2, 0.2);
-		// backdrop-filter: blur(9px);
-		// border: 1px solid black;
+		height: 200px;
+		background-color: rgba(2, 2, 2, 0.5);
 		z-index: 1; /* make sure the div is above other elements */
-		// visibility: hidden;
+		overflow: hidden;
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.25);
+		box-shadow: 0px 8px 18px 0px rgba(0, 0, 0, 0.5);
 
-		&:focus {
-			visibility: visible !important;
-			border: 1px solid gray;
+		// opacity: 0.0;
+		// transition: all 2.15s ease-out;
+
+		padding: 0 1em;
+	}
+
+	.filter-menu-hitbox {
+		position: absolute;
+		left: 30px;
+		bottom: 228px;
+		border-radius: 32px;
+		padding: 10px 14px;
+		// display: none;
+		filter: blur(9px);
+		// transform: translate(0px, 0px);
+		visibility: hidden;
+		opacity: 0.0;
+		transition: all 0.15s ease-in-out;
+		// border: 1px solid pink;
+
+		&:hover {
+			visibility: visible;
+			opacity: 1.0;
+			filter: blur(0px);
+			transform: translateY(-8px);
+			transition: all 0.15s ease-in-out;
+		}
+
+	}
+
+	.filter-button {
+		&:hover + .filter-menu-hitbox {
+			visibility: visible;
+			opacity: 1.0;
+			filter: blur(0px);
+			transform: translateY(-8px);
+			transition: all 0.15s ease-in-out;
 		}
 	}
 
+	.filter-selected {
+		background-color: rgb(220, 220, 220);
+		color: rgb(32, 32, 32, 0);
+		fill: rgb(32, 32, 32);
+		transition: background-color 0.15s ease-in-out;
+
+		&:hover {
+			background-color: rgb(220, 220, 220, 0.7);
+			transition: background-color 0.1s ease-in-out;
+		}
+	}
 
 	div#toolbar {
 		display: flex;
@@ -294,18 +339,6 @@
 			// color: rgb(255, 130, 192);
 			transition: background-color 0.1s ease-in-out;
 			transform: scale(0.9);
-		}
-	}
-
-	.filter-selected {
-		background-color: rgb(220, 220, 220);
-		color: rgb(32, 32, 32, 0);
-		fill: rgb(32, 32, 32);
-		transition: background-color 0.15s ease-in-out;
-
-		&:hover {
-			background-color: rgb(220, 220, 220, 0.8);
-			transition: background-color 0.1s ease-in-out;
 		}
 	}
 

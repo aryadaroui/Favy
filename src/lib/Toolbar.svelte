@@ -150,7 +150,7 @@
 </script>
 
 <div id="toolbar">
-	<div class="group flex-start">
+	<div class="group left">
 		<button on:click={choose_dir}>
 			<Folder />
 		</button>
@@ -211,13 +211,14 @@
 		</button>
 	</div>
 
-	<div class="group flex-end">
+	<div class="group right">
 		{#if $status.text != ''}
 			<p>{$status.text}</p>
 		{:else}
 			<span style="margin-right: 3px;"><Photo /> </span>
 			<p>{$status.reel.idx} / {$status.reel.len} / {$photo_names.length}</p>
-			&nbsp; – &nbsp;<span><Papers /></span>
+			<p>&nbsp; – &nbsp;</p>
+			<span><Papers /></span>
 			<p>{$status.page.idx} / {$status.page.len}</p>
 		{/if}
 
@@ -252,7 +253,7 @@
 		border-radius: 16px;
 		width: 200px;
 		height: 200px;
-		background-color: rgba(2, 2, 2, 0.5);
+		background-color: rgba(2, 2, 2, 0.8);
 		z-index: 1; /* make sure the div is above other elements */
 		overflow: hidden;
 		-webkit-backdrop-filter: blur(12px);
@@ -304,6 +305,12 @@
 			transform: translateY(-12px);
 			transition: all 0.15s ease-in-out;
 		}
+
+		&:active {
+			color: rgba(105, 222, 255, 0.5);
+			fill: rgba(105, 222, 255, 0.5);
+			transition: background-color 0.1s ease-in-out;
+		}
 	}
 
 	.filter-menu-hitbox {
@@ -313,13 +320,18 @@
 	}
 
 	.filter-selected {
-		background-color: rgb(220, 220, 220);
-		color: rgb(32, 32, 32, 0);
-		fill: rgb(32, 32, 32);
+		color: rgb(105, 222, 255);
+		fill: rgb(105, 222, 255);
 		transition: background-color 0.15s ease-in-out;
 
 		&:hover {
-			background-color: rgb(220, 220, 220, 0.7);
+			color: rgb(105, 222, 255);
+			fill: rgb(105, 222, 255);
+			transition: background-color 0.1s ease-in-out;
+		}
+		&:active {
+			color: rgba(105, 222, 255, 0.5);
+			fill: rgba(105, 222, 255, 0.5);
 			transition: background-color 0.1s ease-in-out;
 		}
 	}
@@ -328,10 +340,10 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		align-items: center;
+		// align-items: center;
 		// height: 30px;
-		width: calc(100% - 8px);
-		padding: 6px 4px;
+		// width: calc(100% - 8px);
+		padding: 6px 6px;
 		// padding-right: 20px;
 		background-color: rgba(16, 16, 16, 1);
 
@@ -461,22 +473,26 @@
 	.group {
 		display: flex;
 		flex-direction: row;
-		flex-grow: 1;
 		align-items: center;
 		height: 30px;
-		// background-color: rgba(37, 37, 37, 1);
+		white-space: nowrap;
+		overflow: hidden;
 	}
 
-	.flex-start {
+	.left {
 		justify-content: flex-start;
+		width: 300px;
 	}
 
-	.flex-end {
+	.right {
 		justify-content: flex-end;
+		width: 300px;
 	}
 
 	.center {
 		justify-content: center;
+		width: 300px;
+		z-index: 1;
 	}
 
 	.spacer {

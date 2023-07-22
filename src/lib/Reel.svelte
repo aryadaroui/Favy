@@ -4,6 +4,8 @@
 	import ImageBlobReduce from 'image-blob-reduce';
 	import { status } from '$lib/stores';
 
+	import ArrowRight from './icons/ArrowRight.svelte';
+
 	const ThumbProcessor = {
 		NODE_SHARP: 'NODE_SHARP', // leverages multi-core
 		WEB_CANVAS: 'WEB_CANVAS', // leverages GPU
@@ -60,11 +62,11 @@
 			on_current_photo_change(current.photo.name);
 			scroll_to_photo(current.photo.name);
 
-				$status.reel.idx = current.photo.idx + 1;
-				$status.reel.len = photo_table[current.page_idx].length;
-				$status.page.idx = current.page_idx + 1;
-				$status.page.len = photo_table.length;
-				$status.text = ''
+			$status.reel.idx = current.photo.idx + 1;
+			$status.reel.len = photo_table[current.page_idx].length;
+			$status.page.idx = current.page_idx + 1;
+			$status.page.len = photo_table.length;
+			$status.text = '';
 
 			document.getElementById(current.photo.name)?.classList.add('selected');
 		},
@@ -242,7 +244,10 @@
 			}
 
 			if (event.key == 'ArrowRight' && event.shiftKey) {
-				reel_node.scroll({ left: reel_node.scrollWidth - reel_node.clientWidth, behavior: 'smooth' });
+				reel_node.scroll({
+					left: reel_node.scrollWidth - reel_node.clientWidth,
+					behavior: 'smooth',
+				});
 				// TODO: if control key is held, select the select photo in the reel.
 			}
 		});
@@ -265,7 +270,9 @@
 	{/each}
 
 	<div class="scroll-item">
-		<div class="pad" />
+		<div class="pad">
+			<button class="right"> <ArrowRight /> </button>
+		</div>
 	</div>
 
 	<!-- <div id="center-marker" /> -->
@@ -300,9 +307,29 @@
 
 		.pad {
 			width: calc(50vw - 75px - 20px);
+
 			// margin: 0 20px;
 			height: 200px;
 			background-color: rgba(16, 16, 16, 0.2);
+
+			display: flex;
+			justify-content: left;
+			align-items: center;
+
+			button {
+				width: 64px;
+				height: 64px;
+
+				transition: all 0.05s ease-in-out;
+			}
+
+			button.right {
+				margin-left: 20px;
+			}
+
+			button.left {
+				margin-right: 20px;
+			}
 		}
 
 		img {

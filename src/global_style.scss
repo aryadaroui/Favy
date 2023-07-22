@@ -7,3 +7,43 @@ body {
 	color: gray;
 }
 
+
+button {
+	height: 24;
+	width: 24;
+
+	background-color: rgba(0, 0, 0, 0);
+	border: none;
+	border-radius: 8px;
+	align-items: center;
+	justify-content: center;
+
+	// max-width: 200px;
+	// height: 28px;
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-user-drag: none;
+
+	transition: all 0.15s ease-in-out;
+
+	color: #aaa;
+	// color: rgb(255, 130, 192);
+
+	fill: rgba(0, 0, 0, 0);
+
+	&:hover {
+		background-color: rgba(127, 127, 127, 0.2);
+		// color: rgb(200, 200, 200);
+		color: #ddd;
+		cursor: pointer;
+		transition: background-color 0.1s ease-in-out;
+	}
+
+	&:active {
+		background-color: rgba(127, 127, 127, 0.5);
+		// color: rgb(222, 222, 222);
+		// color: rgb(255, 130, 192);
+		transition: background-color 0.1s ease-in-out;
+		transform: scale(0.9);
+	}
+}

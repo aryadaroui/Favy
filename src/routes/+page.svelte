@@ -120,7 +120,7 @@
 	}
 
 	window.addEventListener('keydown', (e) => {
-		if (e.key === 'Enter') {
+		if (e.code === 'Space') {
 			image_viewer.center();
 		}
 

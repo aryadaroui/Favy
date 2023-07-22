@@ -234,9 +234,8 @@
 		<div class="goto-menu-hitbox hover-menu-hitbox">
 			<div class="hover-menu">
 				<p>Go to</p>
-
-				photo #:<input type="text" />
-				page #: <input type="text" />
+				photo #:<input type="text" /> <br>
+				page #: <input type="text" /> <br>
 				<hr />
 				filename:<input type="text" />
 			</div>
@@ -258,6 +257,9 @@
 		overflow: hidden;
 		-webkit-backdrop-filter: blur(12px);
 		border: 1px solid rgba(255, 255, 255, 0.25);
+		// border-top: 1px solid rgba(255, 255, 255, 0.5);
+		// border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
 		box-shadow: 0px 8px 18px 0px rgba(0, 0, 0, 0.5);
 		padding: 0 1em;
 	}
@@ -351,45 +353,7 @@
 		border-bottom: 1px solid rgba(0, 0, 0, 0.5);
 	}
 
-	button {
-		height: 24;
-		width: 24;
 
-		background-color: rgba(0, 0, 0, 0);
-		border: none;
-		border-radius: 8px;
-		align-items: center;
-		justify-content: center;
-
-		// max-width: 200px;
-		// height: 28px;
-		user-select: none;
-		-webkit-user-select: none;
-		-webkit-user-drag: none;
-
-		transition: all 0.15s ease-in-out;
-
-		color: #aaa;
-		// color: rgb(255, 130, 192);
-
-		fill: rgba(0, 0, 0, 0);
-
-		&:hover {
-			background-color: rgba(127, 127, 127, 0.2);
-			// color: rgb(200, 200, 200);
-			color: #ddd;
-			cursor: pointer;
-			transition: background-color 0.1s ease-in-out;
-		}
-
-		&:active {
-			background-color: rgba(127, 127, 127, 0.5);
-			// color: rgb(222, 222, 222);
-			// color: rgb(255, 130, 192);
-			transition: background-color 0.1s ease-in-out;
-			transform: scale(0.9);
-		}
-	}
 
 	.heart {
 		&:active {
@@ -510,5 +474,6 @@
 		border-radius: 0.2em;
 		color: gray;
 		width: 10em;
+		height: 3em;
 	}
 </style>

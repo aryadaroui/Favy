@@ -14,7 +14,7 @@
 	import Crosshair from '$lib/icons/Crosshair.svelte';
 	import Cog from '$lib/icons/Cog.svelte';
 
-	import { current_photo, filter, status } from '$lib/stores';
+	import { current_photo, filter, status, photo_names } from '$lib/stores';
 	import { onMount } from 'svelte';
 
 	export let choose_dir: () => void;
@@ -212,12 +212,14 @@
 	</div>
 
 	<div class="group flex-end">
-
-			{#if $status.text != ''}
-				<p>{$status.text}</p>
-			{:else}
-			<span style="margin-right: 3px;"><Photo /> </span><p> {$status.reel.idx} / {$status.reel.len}</p> &nbsp; – &nbsp; <span><Papers /></span> <p>{$status.page.idx} / {$status.page.len}</p>
-			{/if}
+		{#if $status.text != ''}
+			<p>{$status.text}</p>
+		{:else}
+			<span style="margin-right: 3px;"><Photo /> </span>
+			<p>{$status.reel.idx} / {$status.reel.len} / {$photo_names.length}</p>
+			&nbsp; – &nbsp;<span><Papers /></span>
+			<p>{$status.page.idx} / {$status.page.len}</p>
+		{/if}
 
 		<div class="spacer" />
 
@@ -355,7 +357,7 @@
 
 		transition: all 0.15s ease-in-out;
 
-		color: #bbb;
+		color: #aaa;
 		// color: rgb(255, 130, 192);
 
 		fill: rgba(0, 0, 0, 0);
@@ -363,7 +365,7 @@
 		&:hover {
 			background-color: rgba(127, 127, 127, 0.2);
 			// color: rgb(200, 200, 200);
-			color: #eee;
+			color: #ddd;
 			cursor: pointer;
 			transition: background-color 0.1s ease-in-out;
 		}
@@ -394,6 +396,9 @@
 		fill: rgb(255, 130, 192);
 		color: rgb(255, 130, 192);
 		transition: all 0.1s ease-in-out;
+		&:hover {
+			color: rgb(255, 130, 192);
+		}
 	}
 
 	.xcross {
@@ -413,6 +418,9 @@
 		fill: rgb(255, 120, 120);
 		color: rgb(255, 120, 120);
 		transition: all 0.1s ease-in-out;
+		&:hover {
+			color: rgb(255, 120, 120);
+		}
 	}
 
 	.star {
@@ -432,6 +440,9 @@
 		fill: rgb(255, 230, 120);
 		color: rgb(255, 230, 120);
 		transition: all 0.1s ease-in-out;
+		&:hover {
+			color: rgb(255, 230, 120);
+		}
 	}
 
 	p {

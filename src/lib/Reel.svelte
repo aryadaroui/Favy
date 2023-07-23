@@ -4,7 +4,8 @@
 	import ImageBlobReduce from 'image-blob-reduce';
 	import { status } from '$lib/stores';
 
-	import ArrowRight from './icons/ArrowRight.svelte';
+	import ArrowRight from '$lib/icons/ArrowRight.svelte';
+	import ArrowLeft from '$lib/icons/ArrowLeft.svelte';
 
 	const ThumbProcessor = {
 		NODE_SHARP: 'NODE_SHARP', // leverages multi-core
@@ -34,6 +35,11 @@
 	let dir: string;
 	let reel_node: HTMLDivElement;
 	let photo_table: string[][] = [];
+
+	let slide_center_to_right = false;
+	let slide_center_to_left = false;
+	let slide_left_to_center = false;
+	let slide_right_to_center = false;
 
 	const photo_reel: PhotoReel = {
 		buffer: [],
@@ -102,6 +108,7 @@
 			current.set(0, current.page_idx + 1);
 			return current.photo.name;
 		} else {
+			debugger;
 			console.log('end of reel');
 			return '';
 		}
@@ -143,6 +150,7 @@
 
 	function scroll_to_photo(photo_name: PhotoName) {
 		if (photo_name != '') {
+			// debugger
 			const photo_node = document.getElementById(photo_name);
 			if (photo_node != null) {
 				photo_node.scrollIntoView({ behavior: 'smooth', inline: 'center' });
@@ -223,6 +231,8 @@
 
 	onMount(() => {
 		// debugger
+		window.debug = {};
+		window.debug.current = { current };
 		reel_node.addEventListener('wheel', (event) => {
 			if (!event.deltaY) {
 				return;
@@ -251,34 +261,175 @@
 				// TODO: if control key is held, select the select photo in the reel.
 			}
 		});
+
+		reel_node.addEventListener(
+			'animationend',
+			() => {
+				if (slide_center_to_right) {
+					// console.log('left ended');
+					prev_page();
+					slide_center_to_right = false;
+				}
+				if (slide_center_to_left) {
+					// console.log('right ended');
+					next_page();
+					slide_center_to_left = false;
+				}
+
+				// if (slide_right_to_center) {
+				// 	slide_right_to_center = false;
+				// }
+				// if (slide_left_to_center) {
+				// 	slide_left_to_center = false;
+				// }
+			},
+			false,
+		);
+		// })
+
+		// reel_node.ontransitionend = (event) => {
+		// 	if (event.target == reel_node) {
+		// 		if (slide_center_to_right) {
+		// 			console.log('left ended');
+		// 			prev_page();
+		// 			slide_center_to_right = false;
+		// 		}
+		// 		if (slide_center_to_left) {
+		// 			console.log('right ended');
+		// 			next_page();
+		// 			slide_center_to_left = false;
+		// 		}
+
+		// 		if (slide_right_to_center) {
+		// 			slide_right_to_center = false;
+		// 		}
+		// 		if (slide_left_to_center) {
+		// 			slide_left_to_center = false;
+		// 		}
+		// 	}
+		// };
 	});
 </script>
 
 <!-- TODO: Add buttons for previous and next pages into the pad -->
-<div bind:this={reel_node} class="reel">
-	<div class="scroll-item">
-		<div class="pad" />
-	</div>
-
-	{#each photo_reel.buffer as photo_name}
+<div
+	bind:this={reel_node}
+	class="reel"
+	class:slide-center-to-left={slide_center_to_left}
+	class:slide-center-to-right={slide_center_to_right}
+	class:slide-left-to-center={slide_left_to_center}
+	class:slide-right-to-center={slide_right_to_center}>
+	{#if photo_reel.buffer.length == 0}
 		<div class="scroll-item">
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-			<!-- svelte-ignore a11y-missing-attribute -->
-			<img id={photo_name} use:lazy_load on:click={handle_photo_click} />
+			<div class="pad-blank" />
 		</div>
-	{/each}
+	{:else}
+		<div class="scroll-item">
+			<div class="pad pad-left">
+				{#if current.page_idx > 0}
+					<button
+						class="left"
+						on:click={() => {
+							slide_center_to_right = true;
+						}}>
+						<ArrowLeft />
+					</button>
+				{/if}
+			</div>
+		</div>
 
-	<div class="scroll-item">
-		<div class="pad">
-			<button class="right"> <ArrowRight /> </button>
+		{#each photo_reel.buffer as photo_name}
+			<div class="scroll-item">
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<img id={photo_name} use:lazy_load on:click={handle_photo_click} />
+			</div>
+		{/each}
+
+		<div class="scroll-item">
+			<div class="pad pad-right">
+				{#if current.page_idx < photo_table.length - 1}
+					<button
+						class="right"
+						on:click={() => {
+							slide_center_to_left = true;
+						}}>
+						<ArrowRight />
+					</button>
+				{/if}
+			</div>
 		</div>
-	</div>
+	{/if}
 
 	<!-- <div id="center-marker" /> -->
 </div>
 
 <style lang="scss">
+	.slide-center-to-left {
+		animation-name: center-to-left-animation;
+		animation-duration: 0.2s;
+		animation-timing-function: ease-in-out;
+		animation-fill-mode: forwards;
+	}
+
+	.slide-center-to-right {
+		animation-name: center-to-right-animation;
+		animation-duration: 0.2s;
+		animation-timing-function: ease-in-out;
+		animation-fill-mode: forwards;
+	}
+
+	// .slide-right-to-center {
+	// 	animation-name: right-to-center-animation !important;
+	// 	animation-duration: 0.2s;
+	// 	animation-timing-function: ease-in-out;
+	// 	animation-fill-mode: forwards;
+	// }
+
+	// .slide-left-to-center {
+	// 	animation-name: left-to-center-animation !important;
+	// 	animation-duration: 0.2s;
+	// 	animation-timing-function: ease-in-out;
+	// 	animation-fill-mode: forwards;
+	// }
+
+	@keyframes center-to-left-animation {
+		0% {
+			transform: translateX(0);
+		}
+		100% {
+			transform: translateX(-100%);
+		}
+	}
+
+	@keyframes center-to-right-animation {
+		0% {
+			transform: translateX(0);
+		}
+		100% {
+			transform: translateX(-100%);
+		}
+	}
+
+	@keyframes right-to-center-animation {
+		0% {
+			transform: translateX(100%);
+		}
+		100% {
+			transform: translateX(0);
+		}
+	}
+
+	@keyframes left-to-center-animation {
+		0% {
+			transform: translateX(-100%);
+		}
+		100% {
+			transform: translateX(0);
+		}
+	}
+
 	div.reel {
 		display: flex;
 		flex-direction: row;
@@ -294,6 +445,8 @@
 		overflow-y: hidden;
 		background-color: rgba(32, 32, 32, 0.7);
 
+		// transform: translateX(0);
+
 		scroll-snap-type: x mandatory;
 
 		::-webkit-scrollbar {
@@ -305,6 +458,21 @@
 			// border: 1px solid gray;
 		}
 
+		.pad-left {
+			justify-content: right;
+		}
+
+		.pad-right {
+			justify-content: left;
+		}
+
+		.pad-blank {
+			height: 200px;
+			width: 190px;
+			// background-color: pink;
+			// background-color: rgba(16, 16, 16, 0.2);
+		}
+
 		.pad {
 			width: calc(50vw - 75px - 20px);
 
@@ -313,7 +481,7 @@
 			background-color: rgba(16, 16, 16, 0.2);
 
 			display: flex;
-			justify-content: left;
+			// justify-content: left;
 			align-items: center;
 
 			button {

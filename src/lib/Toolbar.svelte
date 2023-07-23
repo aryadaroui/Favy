@@ -144,6 +144,8 @@
 			} else if (event.key == '4') {
 				heart_clicked();
 				heart_down = false;
+			} else if (event.key == '0') {
+				rating.set(0);
 			}
 		});
 	});
@@ -216,7 +218,7 @@
 			<p>{$status.text}</p>
 		{:else}
 			<span style="margin-right: 3px;"><Photo /> </span>
-			<p>{$status.reel.idx} / {$status.reel.len} / {$photo_names.length}</p>
+			<p>{$status.reel.idx} / {$status.reel.len} | {$photo_names.length}</p>
 			<p>&nbsp; – &nbsp;</p>
 			<span><Papers /></span>
 			<p>{$status.page.idx} / {$status.page.len}</p>
@@ -353,8 +355,6 @@
 		border-bottom: 1px solid rgba(0, 0, 0, 0.5);
 	}
 
-
-
 	.heart {
 		&:active {
 			fill: rgba(255, 130, 192, 0.5);
@@ -440,17 +440,19 @@
 		align-items: center;
 		height: 30px;
 		white-space: nowrap;
-		overflow: hidden;
+		// overflow: hidden;
 	}
 
 	.left {
 		justify-content: flex-start;
-		width: 300px;
+		width: 500px;
+		overflow: hidden;
 	}
 
 	.right {
 		justify-content: flex-end;
-		width: 300px;
+		width: 500px;
+		overflow: hidden;
 	}
 
 	.center {
@@ -460,8 +462,8 @@
 	}
 
 	.spacer {
-		width: 2%;
-		max-width: 10px;
+		width: 1vw;
+		max-width: 20px;
 	}
 
 	hr {

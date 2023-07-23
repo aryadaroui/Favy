@@ -59,7 +59,7 @@
 				image_viewer.set_image($current_photo.photo_name);
 
 				// reel.set($photo_names.filter(filter));
-				reel.set($workspace_dir, $photo_names.filter(filter), 100);
+				reel.set($workspace_dir, $photo_names.filter(filter), 2);
 			} else {
 			}
 		});

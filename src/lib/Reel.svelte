@@ -45,6 +45,8 @@
 		buffer: [],
 		set(page_idx: number) {
 			photo_reel.buffer = [];
+			// photo_reel.buffer = photo_table[page_idx];
+
 			tick().then(() => {
 				photo_reel.buffer = photo_table[page_idx];
 			});
@@ -104,6 +106,7 @@
 
 	export function next_page(): PhotoName {
 		if (current.page_idx < photo_table.length - 1) {
+			// slide_center_to_left = true;
 			photo_reel.set(current.page_idx + 1);
 			current.set(0, current.page_idx + 1);
 			return current.photo.name;
@@ -126,6 +129,7 @@
 
 	export function prev_page(): PhotoName {
 		if (current.page_idx > 0) {
+			// slide_center_to_right = true;
 			photo_reel.set(current.page_idx - 1);
 			current.set(photo_table[current.page_idx - 1].length - 1, current.page_idx - 1);
 			return current.photo.name;
@@ -267,13 +271,15 @@
 			() => {
 				if (slide_center_to_right) {
 					// console.log('left ended');
-					prev_page();
+					// prev_page();
 					slide_center_to_right = false;
+					// slide_left_to_center = true;
 				}
 				if (slide_center_to_left) {
 					// console.log('right ended');
-					next_page();
+					// next_page();
 					slide_center_to_left = false;
+					// slide_right_to_center = true;
 				}
 
 				// if (slide_right_to_center) {
@@ -285,6 +291,25 @@
 			},
 			false,
 		);
+
+		reel_node.addEventListener('animationstart', () => {
+			if (slide_center_to_right) {
+				// call prev_page() after a delay of 0.1s
+				// setTimeout(() => {
+				// 	prev_page();
+				// }, 100);
+				// photo_reel.buffer = [];
+			}
+
+			if (slide_center_to_left) {
+				// call next_page() after a delay of 0.1s
+				// setTimeout(() => {
+				// 	next_page();
+				// }, 100);
+				// photo_reel.buffer = [];
+			}
+		});
+
 		// })
 
 		// reel_node.ontransitionend = (event) => {
@@ -312,13 +337,7 @@
 </script>
 
 <!-- TODO: Add buttons for previous and next pages into the pad -->
-<div
-	bind:this={reel_node}
-	class="reel"
-	class:slide-center-to-left={slide_center_to_left}
-	class:slide-center-to-right={slide_center_to_right}
-	class:slide-left-to-center={slide_left_to_center}
-	class:slide-right-to-center={slide_right_to_center}>
+<div bind:this={reel_node} class="reel">
 	{#if photo_reel.buffer.length == 0}
 		<div class="scroll-item">
 			<div class="pad-blank" />
@@ -327,11 +346,7 @@
 		<div class="scroll-item">
 			<div class="pad pad-left">
 				{#if current.page_idx > 0}
-					<button
-						class="left"
-						on:click={() => {
-							slide_center_to_right = true;
-						}}>
+					<button class="left" on:click={prev_page}>
 						<ArrowLeft />
 					</button>
 				{/if}
@@ -350,11 +365,7 @@
 		<div class="scroll-item">
 			<div class="pad pad-right">
 				{#if current.page_idx < photo_table.length - 1}
-					<button
-						class="right"
-						on:click={() => {
-							slide_center_to_left = true;
-						}}>
+					<button class="right" on:click={next_page}>
 						<ArrowRight />
 					</button>
 				{/if}
@@ -368,14 +379,16 @@
 <style lang="scss">
 	.slide-center-to-left {
 		animation-name: center-to-left-animation;
-		animation-duration: 0.2s;
+		// animation-name: left-to-center-animation;
+		animation-duration: 0.5s;
 		animation-timing-function: ease-in-out;
 		animation-fill-mode: forwards;
 	}
 
 	.slide-center-to-right {
 		animation-name: center-to-right-animation;
-		animation-duration: 0.2s;
+		// animation-name: right-to-center-animation;
+		animation-duration: 0.5s;
 		animation-timing-function: ease-in-out;
 		animation-fill-mode: forwards;
 	}

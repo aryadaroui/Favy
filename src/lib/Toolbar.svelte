@@ -218,7 +218,7 @@
 			<p>{$status.text}</p>
 		{:else}
 			<span style="margin-right: 3px;"><Photo /> </span>
-			<p>{$status.reel.idx} / {$status.reel.len} | {$photo_names.length}</p>
+			<p>{$status.reel.idx} / {$status.reel.len} / {$photo_names.length}</p>
 			<p>&nbsp; – &nbsp;</p>
 			<span><Papers /></span>
 			<p>{$status.page.idx} / {$status.page.len}</p>

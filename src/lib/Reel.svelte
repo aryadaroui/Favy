@@ -28,7 +28,7 @@
 			name: string;
 		};
 		page_idx: number;
-		set: (photo_idx: number, page_idx: number) => void;
+		set: (photo_idx: number, page_idx: number, scroll?: boolean) => void;
 	}
 
 	// // // declarations
@@ -59,7 +59,7 @@
 			name: '',
 		},
 		page_idx: 0,
-		set(photo_idx: number, page_idx: number) {
+		set(photo_idx: number, page_idx: number, scroll: boolean = true) {
 			// TODO: use svelte's builtin class directives for styling. unfortunately i can't get it to update at the moment.
 
 			document.getElementById(current.photo.name)?.classList.remove('selected');
@@ -68,7 +68,9 @@
 			this.page_idx = page_idx;
 
 			on_current_photo_change(current.photo.name);
-			scroll_to_photo(current.photo.name);
+			if (scroll) {
+				scroll_to_photo(current.photo.name);
+			}
 
 			$status.reel.idx = current.photo.idx + 1;
 			$status.reel.len = photo_table[current.page_idx].length;
@@ -106,12 +108,33 @@
 
 	export function next_page(): PhotoName {
 		if (current.page_idx < photo_table.length - 1) {
-			// slide_center_to_left = true;
-			photo_reel.set(current.page_idx + 1);
-			current.set(0, current.page_idx + 1);
+			reel_node.animate(
+				[
+					// keyframes
+					{ transform: 'translateX(0)' },
+					{ transform: 'translateX(-100%)' },
+				],
+				{
+					// timing options
+					duration: 250,
+					easing: 'ease-in',
+					// fill: 'forwards',
+				},
+			).onfinish = () => {
+				photo_reel.buffer = [];
+
+				reel_node.animate([{ transform: 'translateX(100%)' }, { transform: 'translateX(0)' }], {
+					duration: 250,
+					easing: 'ease-out',
+				}).onfinish = () => {
+					photo_reel.set(current.page_idx + 1);
+
+					current.set(0, current.page_idx + 1, false);
+				};
+			};
+
 			return current.photo.name;
 		} else {
-			debugger;
 			console.log('end of reel');
 			return '';
 		}
@@ -129,9 +152,21 @@
 
 	export function prev_page(): PhotoName {
 		if (current.page_idx > 0) {
-			// slide_center_to_right = true;
-			photo_reel.set(current.page_idx - 1);
-			current.set(photo_table[current.page_idx - 1].length - 1, current.page_idx - 1);
+			reel_node.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(100%)' }], {
+				duration: 250,
+				easing: 'ease-in-out',
+			}).onfinish = () => {
+				photo_reel.set(current.page_idx - 1);
+				current.set(photo_table[current.page_idx - 1].length - 1, current.page_idx - 1, false);
+
+				reel_node.animate([{ transform: 'translateX(-100%)' }, { transform: 'translateX(0)' }], {
+					duration: 250,
+					easing: 'ease-in-out',
+				});
+			};
+
+			// photo_reel.set(current.page_idx - 1);
+			// current.set(photo_table[current.page_idx - 1].length - 1, current.page_idx - 1);
 			return current.photo.name;
 		} else {
 			console.log('beginning of reel');
@@ -153,6 +188,8 @@
 	// // // internal functions
 
 	function scroll_to_photo(photo_name: PhotoName) {
+		// debugger
+		// console.log(`scroll_to_photo(): ${photo_name}`);
 		if (photo_name != '') {
 			// debugger
 			const photo_node = document.getElementById(photo_name);
@@ -457,6 +494,8 @@
 		overflow-x: scroll;
 		overflow-y: hidden;
 		background-color: rgba(32, 32, 32, 0.7);
+
+		// transform: translateX(50%);
 
 		// transform: translateX(0);
 

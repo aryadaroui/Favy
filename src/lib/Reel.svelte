@@ -36,11 +36,6 @@
 	let reel_node: HTMLDivElement;
 	let photo_table: string[][] = [];
 
-	let slide_center_to_right = false;
-	let slide_center_to_left = false;
-	let slide_left_to_center = false;
-	let slide_right_to_center = false;
-
 	const photo_reel: PhotoReel = {
 		buffer: [],
 		set(page_idx: number) {
@@ -96,81 +91,88 @@
 		current.set(0, 0);
 	}
 
-	export function next_photo(): PhotoName {
+	export function next_photo(): void {
 		if (current.photo.idx < photo_reel.buffer.length - 1) {
 			current.set(current.photo.idx + 1, current.page_idx);
-			return current.photo.name;
 		} else {
 			// if at the end of the current page, try to go to the next page
-			return next_page();
+			next_page();
 		}
 	}
 
-	export function next_page(): PhotoName {
-		if (current.page_idx < photo_table.length - 1) {
-			reel_node.animate(
-				[
-					// keyframes
-					{ transform: 'translateX(0)' },
-					{ transform: 'translateX(-100%)' },
-				],
-				{
-					// timing options
-					duration: 250,
-					easing: 'ease-in',
-					// fill: 'forwards',
-				},
-			).onfinish = () => {
-				photo_reel.buffer = [];
+	let animating = false;
+	export function next_page(): void {
+		if (!animating) {
+			if (current.page_idx < photo_table.length - 1 && !animating) {
+				animating = true;
+				reel_node.animate(
+					[
+						// keyframes
+						{ transform: 'translateX(0)' },
+						{ transform: 'translateX(-100%)' },
+					],
+					{
+						// timing options
+						duration: 250,
+						easing: 'ease-in',
+						// fill: 'forwards',
+					},
+				).onfinish = () => {
+					photo_reel.buffer = [];
 
-				reel_node.animate([{ transform: 'translateX(100%)' }, { transform: 'translateX(0)' }], {
-					duration: 250,
-					easing: 'ease-out',
-				}).onfinish = () => {
-					photo_reel.set(current.page_idx + 1);
-
-					current.set(0, current.page_idx + 1, false);
+					reel_node.animate([{ transform: 'translateX(100%)' }, { transform: 'translateX(0)' }], {
+						duration: 250,
+						easing: 'ease-out',
+					}).onfinish = () => {
+						photo_reel.set(current.page_idx + 1);
+						current.set(0, current.page_idx + 1, false);
+						animating = false;
+					};
 				};
-			};
-
-			return current.photo.name;
+			} else {
+				console.log('end of reel');
+			}
 		} else {
-			console.log('end of reel');
-			return '';
+			console.log('next_page(): denied. animating');
 		}
 	}
 
-	export function prev_photo(): PhotoName {
+	export function prev_photo(): void {
 		if (current.photo.idx > 0) {
 			current.set(current.photo.idx - 1, current.page_idx);
-			return current.photo.name;
 		} else {
 			// if at the beginning of the current page, try to go to the previous page
-			return prev_page();
+			prev_page();
 		}
 	}
 
-	export function prev_page(): PhotoName {
-		if (current.page_idx > 0) {
-			reel_node.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(100%)' }], {
-				duration: 250,
-				easing: 'ease-in-out',
-			}).onfinish = () => {
-				photo_reel.set(current.page_idx - 1);
-				current.set(photo_table[current.page_idx - 1].length - 1, current.page_idx - 1, false);
-
-				reel_node.animate([{ transform: 'translateX(-100%)' }, { transform: 'translateX(0)' }], {
+	export function prev_page(): void {
+		if (!animating) {
+			if (current.page_idx > 0) {
+				animating = true;
+				reel_node.animate([{ transform: 'translateX(0)' }, { transform: 'translateX(100%)' }], {
 					duration: 250,
 					easing: 'ease-in-out',
-				});
-			};
+				}).onfinish = () => {
+					photo_reel.set(current.page_idx - 1);
+					current.set(photo_table[current.page_idx - 1].length - 1, current.page_idx - 1, false);
 
-			// photo_reel.set(current.page_idx - 1);
-			// current.set(photo_table[current.page_idx - 1].length - 1, current.page_idx - 1);
-			return current.photo.name;
+					reel_node.animate([{ transform: 'translateX(-100%)' }, { transform: 'translateX(0)' }], {
+						duration: 250,
+						easing: 'ease-in-out',
+					}).onfinish = () => {
+						animating = false;
+					};
+				};
+
+				// photo_reel.set(current.page_idx - 1);
+				// current.set(photo_table[current.page_idx - 1].length - 1, current.page_idx - 1);
+				// console.log('prev_page(): current photo name: ', current.photo.name);
+			} else {
+				console.log('beginning of reel');
+			}
 		} else {
-			console.log('beginning of reel');
-			return '';
+			console.log('prev_page(): denied. animating');
 		}
 	}
 
@@ -303,49 +305,49 @@
 			}
 		});
 
-		reel_node.addEventListener(
-			'animationend',
-			() => {
-				if (slide_center_to_right) {
-					// console.log('left ended');
-					// prev_page();
-					slide_center_to_right = false;
-					// slide_left_to_center = true;
-				}
-				if (slide_center_to_left) {
-					// console.log('right ended');
-					// next_page();
-					slide_center_to_left = false;
-					// slide_right_to_center = true;
-				}
+		// reel_node.addEventListener(
+		// 	'animationend',
+		// 	() => {
+		// 		if (slide_center_to_right) {
+		// 			// console.log('left ended');
+		// 			// prev_page();
+		// 			slide_center_to_right = false;
+		// 			// slide_left_to_center = true;
+		// 		}
+		// 		if (slide_center_to_left) {
+		// 			// console.log('right ended');
+		// 			// next_page();
+		// 			slide_center_to_left = false;
+		// 			// slide_right_to_center = true;
+		// 		}
 
-				// if (slide_right_to_center) {
-				// 	slide_right_to_center = false;
-				// }
-				// if (slide_left_to_center) {
-				// 	slide_left_to_center = false;
-				// }
-			},
-			false,
-		);
+		// 		// if (slide_right_to_center) {
+		// 		// 	slide_right_to_center = false;
+		// 		// }
+		// 		// if (slide_left_to_center) {
+		// 		// 	slide_left_to_center = false;
+		// 		// }
+		// 	},
+		// 	false,
+		// );
 
-		reel_node.addEventListener('animationstart', () => {
-			if (slide_center_to_right) {
-				// call prev_page() after a delay of 0.1s
-				// setTimeout(() => {
-				// 	prev_page();
-				// }, 100);
-				// photo_reel.buffer = [];
-			}
+		// reel_node.addEventListener('animationstart', () => {
+		// 	if (slide_center_to_right) {
+		// 		// call prev_page() after a delay of 0.1s
+		// 		// setTimeout(() => {
+		// 		// 	prev_page();
+		// 		// }, 100);
+		// 		// photo_reel.buffer = [];
+		// 	}
 
-			if (slide_center_to_left) {
-				// call next_page() after a delay of 0.1s
-				// setTimeout(() => {
-				// 	next_page();
-				// }, 100);
-				// photo_reel.buffer = [];
-			}
-		});
+		// 	if (slide_center_to_left) {
+		// 		// call next_page() after a delay of 0.1s
+		// 		// setTimeout(() => {
+		// 		// 	next_page();
+		// 		// }, 100);
+		// 		// photo_reel.buffer = [];
+		// 	}
+		// });
 
 		// })
 
@@ -414,21 +416,21 @@
 </div>
 
 <style lang="scss">
-	.slide-center-to-left {
-		animation-name: center-to-left-animation;
-		// animation-name: left-to-center-animation;
-		animation-duration: 0.5s;
-		animation-timing-function: ease-in-out;
-		animation-fill-mode: forwards;
-	}
+	// .slide-center-to-left {
+	// 	animation-name: center-to-left-animation;
+	// 	// animation-name: left-to-center-animation;
+	// 	animation-duration: 0.5s;
+	// 	animation-timing-function: ease-in-out;
+	// 	animation-fill-mode: forwards;
+	// }
 
-	.slide-center-to-right {
-		animation-name: center-to-right-animation;
-		// animation-name: right-to-center-animation;
-		animation-duration: 0.5s;
-		animation-timing-function: ease-in-out;
-		animation-fill-mode: forwards;
-	}
+	// .slide-center-to-right {
+	// 	animation-name: center-to-right-animation;
+	// 	// animation-name: right-to-center-animation;
+	// 	animation-duration: 0.5s;
+	// 	animation-timing-function: ease-in-out;
+	// 	animation-fill-mode: forwards;
+	// }
 
 	// .slide-right-to-center {
 	// 	animation-name: right-to-center-animation !important;
@@ -444,41 +446,41 @@
 	// 	animation-fill-mode: forwards;
 	// }
 
-	@keyframes center-to-left-animation {
-		0% {
-			transform: translateX(0);
-		}
-		100% {
-			transform: translateX(-100%);
-		}
-	}
+	// @keyframes center-to-left-animation {
+	// 	0% {
+	// 		transform: translateX(0);
+	// 	}
+	// 	100% {
+	// 		transform: translateX(-100%);
+	// 	}
+	// }
 
-	@keyframes center-to-right-animation {
-		0% {
-			transform: translateX(0);
-		}
-		100% {
-			transform: translateX(-100%);
-		}
-	}
+	// @keyframes center-to-right-animation {
+	// 	0% {
+	// 		transform: translateX(0);
+	// 	}
+	// 	100% {
+	// 		transform: translateX(-100%);
+	// 	}
+	// }
 
-	@keyframes right-to-center-animation {
-		0% {
-			transform: translateX(100%);
-		}
-		100% {
-			transform: translateX(0);
-		}
-	}
+	// @keyframes right-to-center-animation {
+	// 	0% {
+	// 		transform: translateX(100%);
+	// 	}
+	// 	100% {
+	// 		transform: translateX(0);
+	// 	}
+	// }
 
-	@keyframes left-to-center-animation {
-		0% {
-			transform: translateX(-100%);
-		}
-		100% {
-			transform: translateX(0);
-		}
-	}
+	// @keyframes left-to-center-animation {
+	// 	0% {
+	// 		transform: translateX(-100%);
+	// 	}
+	// 	100% {
+	// 		transform: translateX(0);
+	// 	}
+	// }
 
 	div.reel {
 		display: flex;

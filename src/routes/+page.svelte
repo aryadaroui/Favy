@@ -96,21 +96,21 @@
 	function next() {
 		let next_photo = reel.next_photo();
 
-		if (next_photo != '') {
-			update_current_photo_by_name(next_photo);
-		} else {
-			console.log('/:next(): cannot get next photo; end of reel');
-		}
+		// if (next_photo != '') {
+		// 	update_current_photo_by_name(next_photo);
+		// } else {
+		// 	// console.log('/:next(): cannot get next photo; end of reel');
+		// }
 	}
 
 	function prev() {
 		let prev_photo = reel.prev_photo();
 
-		if (prev_photo != '') {
-			update_current_photo_by_name(prev_photo);
-		} else {
-			console.log('/:prev(): cannot get prev photo; beginning of reel');
-		}
+		// if (prev_photo != '') {
+		// 	update_current_photo_by_name(prev_photo);
+		// } else {
+		// 	// console.log('/:prev(): cannot get prev photo; beginning of reel');
+		// }
 	}
 
 	function open_settings() {

@@ -7,12 +7,7 @@
 	import ArrowRight from '$lib/icons/ArrowRight.svelte';
 	import ArrowLeft from '$lib/icons/ArrowLeft.svelte';
 
-	const ThumbProcessor = {
-		NODE_SHARP: 'NODE_SHARP', // leverages multi-core
-		WEB_CANVAS: 'WEB_CANVAS', // leverages GPU
-		// RUST_SIMD: 'RUST_SIMD', // leverages CPU-SIMD
-	};
-	const thumb_processor = ThumbProcessor.NODE_SHARP;
+
 
 	// // // types
 	type PhotoName = string;
@@ -32,6 +27,17 @@
 	}
 
 	// // // declarations
+	// utility
+	const ThumbProcessor = {
+		NODE_SHARP: 'NODE_SHARP', // leverages multi-core
+		WEB_CANVAS: 'WEB_CANVAS', // leverages GPU
+		// RUST_SIMD: 'RUST_SIMD', // leverages CPU-SIMD
+	};
+	const thumb_processor = ThumbProcessor.NODE_SHARP;
+	const reducer = new ImageBlobReduce();
+	let animating = false;
+
+
 	let dir: string;
 	let reel_node: HTMLDivElement;
 	let photo_table: string[][] = [];
@@ -76,7 +82,6 @@
 			document.getElementById(current.photo.name)?.classList.add('selected');
 		},
 	};
-	const reducer = new ImageBlobReduce();
 
 	// // // exports
 	export let on_current_photo_change: (photo_name: PhotoName) => void;
@@ -100,7 +105,15 @@
 		}
 	}
 
-	let animating = false;
+	export function prev_photo(): void {
+		if (current.photo.idx > 0) {
+			current.set(current.photo.idx - 1, current.page_idx);
+		} else {
+			// if at the beginning of the current page, try to go to the previous page
+			prev_page();
+		}
+	}
+
 	export function next_page(): void {
 		if (!animating) {
 			if (current.page_idx < photo_table.length - 1 && !animating) {
@@ -134,15 +147,6 @@
 			}
 		} else {
 			console.log('next_page(): denied. animating');
-		}
-	}
-
-	export function prev_photo(): void {
-		if (current.photo.idx > 0) {
-			current.set(current.photo.idx - 1, current.page_idx);
-		} else {
-			// if at the beginning of the current page, try to go to the previous page
-			prev_page();
 		}
 	}
 
@@ -266,9 +270,6 @@
 	// // // lifecycle
 
 	onMount(() => {
-		// debugger
-		window.debug = {};
-		window.debug.current = { current };
 		reel_node.addEventListener('wheel', (event) => {
 			if (!event.deltaY) {
 				return;
@@ -297,74 +298,6 @@
 				// TODO: if control key is held, select the select photo in the reel.
 			}
 		});
-
-		// reel_node.addEventListener(
-		// 	'animationend',
-		// 	() => {
-		// 		if (slide_center_to_right) {
-		// 			// console.log('left ended');
-		// 			// prev_page();
-		// 			slide_center_to_right = false;
-		// 			// slide_left_to_center = true;
-		// 		}
-		// 		if (slide_center_to_left) {
-		// 			// console.log('right ended');
-		// 			// next_page();
-		// 			slide_center_to_left = false;
-		// 			// slide_right_to_center = true;
-		// 		}
-
-		// 		// if (slide_right_to_center) {
-		// 		// 	slide_right_to_center = false;
-		// 		// }
-		// 		// if (slide_left_to_center) {
-		// 		// 	slide_left_to_center = false;
-		// 		// }
-		// 	},
-		// 	false,
-		// );
-
-		// reel_node.addEventListener('animationstart', () => {
-		// 	if (slide_center_to_right) {
-		// 		// call prev_page() after a delay of 0.1s
-		// 		// setTimeout(() => {
-		// 		// 	prev_page();
-		// 		// }, 100);
-		// 		// photo_reel.buffer = [];
-		// 	}
-
-		// 	if (slide_center_to_left) {
-		// 		// call next_page() after a delay of 0.1s
-		// 		// setTimeout(() => {
-		// 		// 	next_page();
-		// 		// }, 100);
-		// 		// photo_reel.buffer = [];
-		// 	}
-		// });
-
-		// })
-
-		// reel_node.ontransitionend = (event) => {
-		// 	if (event.target == reel_node) {
-		// 		if (slide_center_to_right) {
-		// 			console.log('left ended');
-		// 			prev_page();
-		// 			slide_center_to_right = false;
-		// 		}
-		// 		if (slide_center_to_left) {
-		// 			console.log('right ended');
-		// 			next_page();
-		// 			slide_center_to_left = false;
-		// 		}
-
-		// 		if (slide_right_to_center) {
-		// 			slide_right_to_center = false;
-		// 		}
-		// 		if (slide_left_to_center) {
-		// 			slide_left_to_center = false;
-		// 		}
-		// 	}
-		// };
 	});
 </script>
 
@@ -405,75 +338,9 @@
 		</div>
 	{/if}
 
-	<!-- <div id="center-marker" /> -->
 </div>
 
 <style lang="scss">
-	// .slide-center-to-left {
-	// 	animation-name: center-to-left-animation;
-	// 	// animation-name: left-to-center-animation;
-	// 	animation-duration: 0.5s;
-	// 	animation-timing-function: ease-in-out;
-	// 	animation-fill-mode: forwards;
-	// }
-
-	// .slide-center-to-right {
-	// 	animation-name: center-to-right-animation;
-	// 	// animation-name: right-to-center-animation;
-	// 	animation-duration: 0.5s;
-	// 	animation-timing-function: ease-in-out;
-	// 	animation-fill-mode: forwards;
-	// }
-
-	// .slide-right-to-center {
-	// 	animation-name: right-to-center-animation !important;
-	// 	animation-duration: 0.2s;
-	// 	animation-timing-function: ease-in-out;
-	// 	animation-fill-mode: forwards;
-	// }
-
-	// .slide-left-to-center {
-	// 	animation-name: left-to-center-animation !important;
-	// 	animation-duration: 0.2s;
-	// 	animation-timing-function: ease-in-out;
-	// 	animation-fill-mode: forwards;
-	// }
-
-	// @keyframes center-to-left-animation {
-	// 	0% {
-	// 		transform: translateX(0);
-	// 	}
-	// 	100% {
-	// 		transform: translateX(-100%);
-	// 	}
-	// }
-
-	// @keyframes center-to-right-animation {
-	// 	0% {
-	// 		transform: translateX(0);
-	// 	}
-	// 	100% {
-	// 		transform: translateX(-100%);
-	// 	}
-	// }
-
-	// @keyframes right-to-center-animation {
-	// 	0% {
-	// 		transform: translateX(100%);
-	// 	}
-	// 	100% {
-	// 		transform: translateX(0);
-	// 	}
-	// }
-
-	// @keyframes left-to-center-animation {
-	// 	0% {
-	// 		transform: translateX(-100%);
-	// 	}
-	// 	100% {
-	// 		transform: translateX(0);
-	// 	}
-	// }
 
 	div.reel {
 		display: flex;
@@ -489,11 +356,6 @@
 		overflow-x: scroll;
 		overflow-y: hidden;
 		background-color: rgba(32, 32, 32, 0.7);
-
-		// transform: translateX(50%);
-
-		// transform: translateX(0);
-
 		scroll-snap-type: x mandatory;
 
 		::-webkit-scrollbar {
@@ -516,19 +378,16 @@
 		.pad-blank {
 			height: 200px;
 			width: 190px;
-			// background-color: pink;
-			// background-color: rgba(16, 16, 16, 0.2);
+
 		}
 
 		.pad {
 			width: calc(50vw - 75px - 20px);
 
-			// margin: 0 20px;
 			height: 200px;
 			background-color: rgba(16, 16, 16, 0.2);
 
 			display: flex;
-			// justify-content: left;
 			align-items: center;
 
 			button {
@@ -573,6 +432,6 @@
 
 	:global(.selected) {
 		border: 1px solid white !important;
-		// transition: all 0.2s ease-out;
+
 	}
 </style>

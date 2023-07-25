@@ -4,22 +4,42 @@
 
 	let export_node: HTMLDivElement;
 
-	let export_settings = {
+	let settings = {
 		heart: true,
 		star3: true,
 		star2: false,
 		star1: false,
 		hate: false,
 		delete_original: false,
+	};
+
+	enum ExportStatus {
+		Ready = 'ready',
+		Working = 'working',
+		Done = 'done',
+		Failed = 'failed',
 	}
 
+	let export_status = ExportStatus.Ready;
 
 	function handle_export() {
 		// make sure to save user progress before export.
 
-		const export_obj = Object.fromEntries($photo_map);
+		export_status = ExportStatus.Working;
 
+		const photos = Object.fromEntries($photo_map);
 
+		invoke('export', {
+			photos,
+		})
+			.then((res) => {
+				console.log(res);
+				export_status = ExportStatus.Done;
+			})
+			.catch((err) => {
+				console.log(err);
+				export_status = ExportStatus.Failed;
+			});
 	}
 </script>
 
@@ -44,18 +64,14 @@
 		border: 1px solid #aaa;
 	}
 
-
-	button.export{
+	button.export {
 		width: 100px;
 		/* background-color: rgba(0, 191, 255, 0.2); */
 		border: 1px solid dodgerblue;
-
 	}
-
 
 	div {
 		color: #ccc;
-
 	}
 
 	.warning {

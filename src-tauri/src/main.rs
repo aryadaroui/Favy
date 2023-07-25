@@ -4,6 +4,34 @@
 use tauri::Manager;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Data {
+    love: i8,
+    rating: i8,
+}
+
+#[derive(Serialize)]
+enum TaskResult {
+    Done,
+    Failed,
+}
+
+type FileNameHashMap = HashMap<String, Data>;
+
+#[tauri::command]
+async fn export(photos: FileNameHashMap) -> Result<TaskResult, String> {
+    println!("Exporting...\n");
+
+    for (key, value) in &photos {
+        println!("Filename: {}", key);
+        println!("- Love: {}, Rating: {}\n", value.love, value.rating);
+    }
+    Ok(TaskResult::Done)
+}
+
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
@@ -15,6 +43,7 @@ fn main() {
 
             Ok(())
         })
+        .invoke_handler(tauri::generate_handler![export])
         .run(tauri::generate_context!())
         .expect("Fatal error while running Favy.");
 }

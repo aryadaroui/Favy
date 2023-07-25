@@ -3,9 +3,11 @@ body {
 	color: gray;
 	margin: 0;
 	overflow: hidden;
-  }
-  
-  button {
+
+
+}
+
+button {
 	align-items: center;
 	background-color: rgba(0, 0, 0, 0);
 	border: none;
@@ -19,17 +21,17 @@ body {
 	-webkit-user-select: none;
 	-webkit-user-drag: none;
 	width: 24;
-  
+
 	&:hover {
-	  background-color: rgba(127, 127, 127, 0.2);
-	  color: #ddd;
-	  cursor: pointer;
-	  transition: background-color 0.1s ease-in-out;
+		background-color: rgba(127, 127, 127, 0.2);
+		color: #ddd;
+		cursor: pointer;
+		transition: background-color 0.1s ease-in-out;
 	}
-  
+
 	&:active {
-	  background-color: rgba(127, 127, 127, 0.5);
-	  transform: scale(0.9);
-	  transition: background-color 0.1s ease-in-out;
+		background-color: rgba(127, 127, 127, 0.5);
+		transform: scale(0.9);
+		transition: background-color 0.1s ease-in-out;
 	}
-  }
+}

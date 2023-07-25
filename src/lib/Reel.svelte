@@ -3,12 +3,9 @@
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import ImageBlobReduce from 'image-blob-reduce';
 	import { status } from '$lib/stores';
-	
 
 	import ArrowRight from '$lib/icons/ArrowRight.svelte';
 	import ArrowLeft from '$lib/icons/ArrowLeft.svelte';
-
-
 
 	// // // types
 	type PhotoName = string;
@@ -37,7 +34,6 @@
 	const thumb_processor = ThumbProcessor.NODE_SHARP;
 	const reducer = new ImageBlobReduce();
 	let animating = false;
-
 
 	let dir: string;
 	let reel_node: HTMLDivElement;
@@ -338,10 +334,42 @@
 			</div>
 		</div>
 	{/if}
-
 </div>
 
 <style lang="scss">
+	// ::-webkit-scrollbar {
+	// 	width: 0;
+	// 	display: none;
+	// 	background: transparent;
+	// }
+
+	// ::-webkit-scrollbar-thumb {
+	// 	background: #ff0000;
+	// }
+
+	.alternate-scrollbar::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+		margin: 8px;
+		padding: 8px;
+
+		// background-color: red;
+	}
+
+	.alternate-scrollbar::-webkit-scrollbar-thumb {
+		background: rgb(16, 16, 16);
+		border-radius: 5px;
+		margin: 8px;
+		padding: 8px;
+	}
+
+	.alternate-scrollbar::-webkit-scrollbar-track {
+		// background: gray;
+		width: 8px;
+		height: 8px;
+		padding: 8px;
+		margin: 8px;
+	}
 
 	div.reel {
 		display: flex;
@@ -359,10 +387,21 @@
 		background-color: rgba(32, 32, 32, 0.7);
 		scroll-snap-type: x mandatory;
 
-		::-webkit-scrollbar {
-			width: 0;
-			display: none;
-		}
+		// scrollbar-color: black transparent;
+
+		// ::-webkit-scrollbar {
+		// 	width: 11px;
+		// }
+
+		// ::-webkit-scrollbar-track {
+		// 	background: black;
+		// }
+
+		// ::-webkit-scrollbar-thumb {
+		// 	background-color: black;
+		// 	border-radius: 6px;
+		// 	border: 3px solid black;
+		// }
 
 		.scroll-item {
 			// border: 1px solid gray;
@@ -379,7 +418,6 @@
 		.pad-blank {
 			height: 200px;
 			width: 190px;
-
 		}
 
 		.pad {
@@ -433,6 +471,5 @@
 
 	:global(.selected) {
 		border: 1px solid white !important;
-
 	}
 </style>

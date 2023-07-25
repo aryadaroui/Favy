@@ -21,17 +21,59 @@
 	export let on_export_clicked: () => void;
 
 	let filter_selected = false;
-	let xcross_selected = false;
-	let star1_selected = false;
-	let star2_selected = false;
-	let star3_selected = false;
-	let heart_selected = false;
 
-	let xcross_down = false;
-	let star1_down = false;
-	let star2_down = false;
-	let star3_down = false;
-	let heart_down = false;
+	let rating_display = {
+		star1: {
+			selected: false,
+			down: false,
+		},
+		star2: {
+			selected: false,
+			down: false,
+		},
+		star3: {
+			selected: false,
+			down: false,
+		},
+		set(val: number) {
+			this.star1.selected = val >= 1;
+			this.star2.selected = val >= 2;
+			this.star3.selected = val >= 3;
+			this.update();
+		},
+		update() {
+			// sveltekit quirk: reassignment triggers reactive update
+			rating_display = rating_display;
+		},
+	};
+
+	let sentiment_display = {
+		heart: {
+			selected: false,
+			down: false,
+		},
+		xcross: {
+			selected: false,
+			down: false,
+		},
+		set(val: number) {
+			if (val == 0) {
+				this.heart.selected = false;
+				this.xcross.selected = false;
+			} else if (val == 1) {
+				this.heart.selected = true;
+				this.xcross.selected = false;
+			} else if (val == -1) {
+				this.heart.selected = false;
+				this.xcross.selected = true;
+			}
+			this.update();
+		},
+		update() {
+			// sveltekit quirk: reassignment triggers reactive update
+			sentiment_display = sentiment_display;
+		},
+	};
 
 	$: $current_photo, update();
 
@@ -39,55 +81,14 @@
 		// const photo_info = $photo_map.get($current_photo.photo_name);
 
 		if ($photo_map.has($current_photo.photo_name)) {
-			love_display.set($photo_map.get($current_photo.photo_name)!.love);
 			rating_display.set($photo_map.get($current_photo.photo_name)!.rating);
+			sentiment_display.set($photo_map.get($current_photo.photo_name)!.love);
 		} else {
 			console.error('Toolbar.svelte: update(): photo_name not found in photo_map');
 		}
 	}
 
-	// let filter_menu_open = false;
-
 	let filter_menu: HTMLDivElement;
-
-	let love_display = {
-		val: 0,
-		set(val: number) {
-			this.val = val;
-			if (val == 0) {
-				heart_selected = false;
-				xcross_selected = false;
-			} else if (val == 1) {
-				heart_selected = true;
-				xcross_selected = false;
-			} else if (val == -1) {
-				heart_selected = false;
-				xcross_selected = true;
-			}
-
-			if ($photo_map.has($current_photo.photo_name)) {
-				$photo_map.get($current_photo.photo_name)!.love = val;
-			} else {
-				console.error('Toolbar.svelte: love.set(): photo_name not found in photo_map');
-			}
-		},
-	};
-
-	let rating_display = {
-		val: 0,
-		set(val: number) {
-			this.val = val;
-			star1_selected = val >= 1;
-			star2_selected = val >= 2;
-			star3_selected = val >= 3;
-
-			if ($photo_map.has($current_photo.photo_name)) {
-				$photo_map.get($current_photo.photo_name)!.rating = val;
-			} else {
-				console.error('Toolbar.svelte: rating.set(): photo_name not found in photo_map');
-			}
-		},
-	};
 
 	export let center: () => void;
 	export let settings: () => void;
@@ -97,34 +98,54 @@
 	}
 
 	function heart_clicked() {
-		love_display.set(love_display.val == 1 ? 0 : 1);
+		if (sentiment_display.heart.selected) {
+			sentiment_display.set(0);
+			$photo_map.get($current_photo.photo_name)!.love = 0;
+		} else {
+			sentiment_display.set(1);
+			$photo_map.get($current_photo.photo_name)!.love = 1;
+		}
+
+		// sentiment_display.update();
 	}
 
 	function xcross_clicked() {
-		love_display.set(love_display.val == -1 ? 0 : -1);
+		if (sentiment_display.xcross.selected) {
+			sentiment_display.set(0);
+			$photo_map.get($current_photo.photo_name)!.love = 0;
+		} else {
+			sentiment_display.set(-1);
+			$photo_map.get($current_photo.photo_name)!.love = -1;
+		}
 	}
 
 	function star1_clicked() {
-		if (rating_display.val == 1) {
+		if (rating_display.star1.selected) {
 			rating_display.set(0);
+			$photo_map.get($current_photo.photo_name)!.rating = 0;
 		} else {
 			rating_display.set(1);
+			$photo_map.get($current_photo.photo_name)!.rating = 1;
 		}
 	}
 
 	function star2_clicked() {
-		if (rating_display.val == 2) {
+		if (rating_display.star2.selected) {
 			rating_display.set(0);
+			$photo_map.get($current_photo.photo_name)!.rating = 0;
 		} else {
 			rating_display.set(2);
+			$photo_map.get($current_photo.photo_name)!.rating = 2;
 		}
 	}
 
 	function star3_clicked() {
-		if (rating_display.val == 3) {
+		if (rating_display.star3.selected) {
 			rating_display.set(0);
+			$photo_map.get($current_photo.photo_name)!.rating = 0;
 		} else {
 			rating_display.set(3);
+			$photo_map.get($current_photo.photo_name)!.rating = 3;
 		}
 	}
 
@@ -132,38 +153,53 @@
 		// TODO: need flag for if any window or menu is focused, e.g. goto menu, settings menu, filter menu, etc.
 		// TODO: have backspace remove everything
 		// TODO: have ESC remove sentiment
+		// TODO: make proper setters; the assign and .update() paattern is smelly.
 		document.addEventListener('keydown', (event) => {
 			if (event.key == '`') {
-				xcross_down = true;
+				sentiment_display.xcross.down = true;
+				sentiment_display.update();
 			} else if (event.key == '1') {
-				star1_down = true;
+				// star1_down = true;
+				rating_display.star1.down = true;
+				rating_display.update();
 			} else if (event.key == '2') {
-				star2_down = true;
+				// star2_down = true;
+				rating_display.star2.down = true;
+				rating_display.update();
 			} else if (event.key == '3') {
-				star3_down = true;
+				// star3_down = true;
+				rating_display.star3.down = true;
+				rating_display.update();
 			} else if (event.key == '4') {
-				heart_down = true;
+				sentiment_display.heart.down = true;
+				sentiment_display.update();
 			}
 		});
 
 		document.addEventListener('keyup', (event) => {
 			if (event.key == '`') {
 				xcross_clicked();
-				xcross_down = false;
+				sentiment_display.xcross.down = false;
+				sentiment_display.update();
 			} else if (event.key == '1') {
 				star1_clicked();
-				star1_down = false;
+				rating_display.star1.down = false;
+				rating_display.update();
 			} else if (event.key == '2') {
 				star2_clicked();
-				star2_down = false;
+				rating_display.star2.down = false;
+				rating_display.update();
 			} else if (event.key == '3') {
 				star3_clicked();
-				star3_down = false;
+				rating_display.star3.down = false;
+				rating_display.update();
 			} else if (event.key == '4') {
 				heart_clicked();
-				heart_down = false;
+				sentiment_display.heart.down = false;
+				sentiment_display.update();
 			} else if (event.key == '0') {
 				rating_display.set(0);
+				rating_display.update();
 			}
 		});
 	});
@@ -194,38 +230,38 @@
 	<div class="group center">
 		<button
 			class="xcross"
-			class:xcross-down={xcross_down}
-			class:xcross-selected={xcross_selected}
+			class:xcross-down={sentiment_display.xcross.down}
+			class:xcross-selected={sentiment_display.xcross.selected}
 			on:click={xcross_clicked}>
 			<Xcross />
 		</button>
 		<div class="spacer" />
 		<button
 			class="star"
-			class:star-down={star1_down}
-			class:star-selected={star1_selected}
+			class:star-down={rating_display.star1.down}
+			class:star-selected={rating_display.star1.selected}
 			on:click={star1_clicked}>
 			<Star />
 		</button>
 		<button
 			class="star"
-			class:star-down={star2_down}
-			class:star-selected={star2_selected}
+			class:star-down={rating_display.star2.down}
+			class:star-selected={rating_display.star2.selected}
 			on:click={star2_clicked}>
 			<Star />
 		</button>
 		<button
 			class="star"
-			class:star-down={star3_down}
-			class:star-selected={star3_selected}
+			class:star-down={rating_display.star3.down}
+			class:star-selected={rating_display.star3.selected}
 			on:click={star3_clicked}>
 			<Star />
 		</button>
 		<div class="spacer" />
 		<button
 			class="heart"
-			class:heart-down={heart_down}
-			class:heart-selected={heart_selected}
+			class:heart-down={sentiment_display.heart.down}
+			class:heart-selected={sentiment_display.heart.selected}
 			on:click={heart_clicked}>
 			<Heart />
 		</button>
@@ -268,6 +304,9 @@
 </div>
 
 <style lang="scss">
+
+	// TODO: consolidate these syles into general classes.
+
 	.hover-menu {
 		border-radius: 16px;
 		width: 200px;

@@ -18,6 +18,7 @@
 	import { onMount } from 'svelte';
 
 	export let choose_dir: () => void;
+	export let on_export_clicked: () => void;
 
 	let filter_selected = false;
 	let xcross_selected = false;
@@ -166,7 +167,7 @@
 			</div>
 		</div>
 
-		<button>
+		<button on:click={on_export_clicked}>
 			<BoxArrowUp />
 		</button>
 		<div class="spacer" />

@@ -5,6 +5,8 @@
 	import { readDir } from '@tauri-apps/api/fs';
 	import type { FileEntry } from '@tauri-apps/api/fs';
 
+	import Modal from '$lib/Modal.svelte';
+
 	import ImageViewer from '$lib/ImageViewer.svelte';
 	import Toolbar from '$lib/Toolbar.svelte';
 	import Reel from '$lib/Reel.svelte';
@@ -15,6 +17,7 @@
 	// let img_idx: number = 0;
 
 	let image_viewer: ImageViewer;
+	let export_modal: Modal;
 	// let reel: Reel;
 	let reel: Reel;
 
@@ -28,7 +31,9 @@
 				$workspace_dir = selecton.toString() + '/'; // SET workspace_dir store
 
 				// get only the .name field of each FileEntry
-				files = (await readDir($workspace_dir, { recursive: false })).map((file) => file.name as string);
+				files = (await readDir($workspace_dir, { recursive: false })).map(
+					(file) => file.name as string,
+				);
 				files = files.filter((file) => {
 					const imageExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.tif', '.tiff'];
 					const extension = file.substring(file.lastIndexOf('.')).toLowerCase();
@@ -139,6 +144,8 @@
 </script>
 
 <main id="windowframe">
+	<Modal bind:this={export_modal} />
+
 	<ImageViewer bind:this={image_viewer} />
 
 	<Toolbar
@@ -146,10 +153,13 @@
 		center={() => {
 			image_viewer.center();
 		}}
-		settings={open_settings} />
+		settings={open_settings}
+		on_export_clicked={() => {
+			export_modal.open();
+		}} />
 
 	<div>
-	<Reel bind:this={reel} on_current_photo_change={update_current_photo_by_name} />
+		<Reel bind:this={reel} on_current_photo_change={update_current_photo_by_name} />
 	</div>
 </main>
 

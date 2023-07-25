@@ -15,6 +15,7 @@ vite.config.ts.timestamp-*
 
 ## rust
 /target
+playground/target
 
 # editor
 .vscode/*
@@ -22,7 +23,6 @@ vite.config.ts.timestamp-*
 
 # testing
 *test*
-*playground*
 *.jpg
 
 # other filetypes i dont use

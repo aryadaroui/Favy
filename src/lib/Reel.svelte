@@ -164,10 +164,6 @@
 						animating = false;
 					};
 				};
-
-				// photo_reel.set(current.page_idx - 1);
-				// current.set(photo_table[current.page_idx - 1].length - 1, current.page_idx - 1);
-				// console.log('prev_page(): current photo name: ', current.photo.name);
 			} else {
 				console.log('beginning of reel');
 			}
@@ -190,10 +186,7 @@
 	// // // internal functions
 
 	function scroll_to_photo(photo_name: PhotoName) {
-		// debugger
-		// console.log(`scroll_to_photo(): ${photo_name}`);
 		if (photo_name != '') {
-			// debugger
 			const photo_node = document.getElementById(photo_name);
 			if (photo_node != null) {
 				photo_node.scrollIntoView({ behavior: 'smooth', inline: 'center' });

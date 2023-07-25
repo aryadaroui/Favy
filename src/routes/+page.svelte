@@ -8,6 +8,8 @@
 	import { Sentiment } from '$lib/stores';
 
 	import Modal from '$lib/Modal.svelte';
+	import Export from '$lib/Export.svelte';
+	import { readTextFile, writeTextFile } from '@tauri-apps/api/fs';
 
 	import ImageViewer from '$lib/ImageViewer.svelte';
 	import Toolbar from '$lib/Toolbar.svelte';
@@ -32,6 +34,15 @@
 			if (selecton) {
 				$workspace_dir = selecton.toString() + '/'; // SET workspace_dir store
 
+				// TODO: turn this load into a function
+				let data = await readTextFile($workspace_dir + 'photo_map.favy');
+				if (data) {
+					$photo_map = new Map(JSON.parse(data));
+					console.log('loaded photo_map.favy');
+				} else {
+					console.log("couldn't load photo_map.favy");
+				}
+
 				// get only the .name field of each FileEntry
 				files = (await readDir($workspace_dir, { recursive: false })).map(
 					(file) => file.name as string,
@@ -44,7 +55,10 @@
 				files.sort((a, b) => a.localeCompare(b));
 
 				$photo_names = files; // SET photo_names store
-				files.forEach((file, idx) => {
+
+				let new_files = files.filter((file) => !$photo_map.has(file));
+
+				new_files.forEach((file, idx) => {
 					// SET photo_map store
 					$photo_map.set(file, {
 						rating: 0,
@@ -69,6 +83,23 @@
 			}
 		});
 	}
+
+	function save() {
+		writeTextFile($workspace_dir + 'photo_map.favy', JSON.stringify([...$photo_map]));
+		// TODO: update status
+	}
+
+	// async function load() {
+	// 	readTextFile($workspace_dir + 'photo_map.favy')
+	// 		.then((file) => {
+	// 			// debugger
+	// 			$photo_map = new Map(JSON.parse(file));
+	// 			console.log('loaded photo_map.favy');
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log("couldn't load photo_map.favy");
+	// 		});
+	// }
 
 	function update_current_photo_by_idx(idx: number) {
 		$current_photo = {
@@ -136,11 +167,19 @@
 		if (e.key === 'ArrowLeft') {
 			prev();
 		}
+
+		// call save if user presses cmd+s
+		if (e.key === 's' && e.metaKey) {
+			console.log('saving!');
+			save();
+		}
 	});
 </script>
 
 <main id="windowframe">
-	<Modal bind:this={export_modal} />
+	<Modal bind:this={export_modal}>
+		<Export />
+	</Modal>
 
 	<ImageViewer bind:this={image_viewer} />
 

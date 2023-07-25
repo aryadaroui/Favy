@@ -28,7 +28,8 @@
 <div class="overlay" class:overlay-open={is_open}>
 	<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 	<div bind:this={modal_node} class="modal" class:modal-open={is_open} tabindex="0">
-		<p>Modal stuff here</p>
+		<!-- <p>Modal stuff here</p> -->
+		<slot />
 	</div>
 </div>
 

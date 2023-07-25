@@ -143,7 +143,7 @@
 		width: auto;
 		image-orientation: none;
 		// image-rendering: optimizeQuality;
-		// image-rendering: optimizeSpeed;
+		image-rendering: optimizeSpeed;
 
 		translate: translate(0px, 100px);
 

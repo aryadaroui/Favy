@@ -80,11 +80,16 @@
 	function update() {
 		// const photo_info = $photo_map.get($current_photo.photo_name);
 
-		if ($photo_map.has($current_photo.photo_name)) {
-			rating_display.set($photo_map.get($current_photo.photo_name)!.rating);
-			sentiment_display.set($photo_map.get($current_photo.photo_name)!.love);
+		if ($current_photo.photo_name != '') {
+			if ($photo_map.has($current_photo.photo_name)) {
+				rating_display.set($photo_map.get($current_photo.photo_name)!.rating);
+				sentiment_display.set($photo_map.get($current_photo.photo_name)!.love);
+			} else {
+				console.error('Toolbar.svelte: update(): photo_name not found in photo_map');
+			}
 		} else {
-			console.error('Toolbar.svelte: update(): photo_name not found in photo_map');
+			rating_display.set(0);
+			sentiment_display.set(0);
 		}
 	}
 
@@ -304,7 +309,6 @@
 </div>
 
 <style lang="scss">
-
 	// TODO: consolidate these syles into general classes.
 
 	.hover-menu {

@@ -14,7 +14,7 @@
 	import Crosshair from '$lib/icons/Crosshair.svelte';
 	import Cog from '$lib/icons/Cog.svelte';
 
-	import { current_photo, filter, status, photo_names } from '$lib/stores';
+	import { current_photo, filter, status, photo_names, photo_map } from '$lib/stores';
 	import { onMount } from 'svelte';
 
 	export let choose_dir: () => void;
@@ -33,11 +33,24 @@
 	let star3_down = false;
 	let heart_down = false;
 
+	$: $current_photo, update();
+
+	function update() {
+		// const photo_info = $photo_map.get($current_photo.photo_name);
+
+		if ($photo_map.has($current_photo.photo_name)) {
+			love_display.set($photo_map.get($current_photo.photo_name)!.love);
+			rating_display.set($photo_map.get($current_photo.photo_name)!.rating);
+		} else {
+			console.error('Toolbar.svelte: update(): photo_name not found in photo_map');
+		}
+	}
+
 	// let filter_menu_open = false;
 
 	let filter_menu: HTMLDivElement;
 
-	let love = {
+	let love_display = {
 		val: 0,
 		set(val: number) {
 			this.val = val;
@@ -51,70 +64,74 @@
 				heart_selected = false;
 				xcross_selected = true;
 			}
+
+			if ($photo_map.has($current_photo.photo_name)) {
+				$photo_map.get($current_photo.photo_name)!.love = val;
+			} else {
+				console.error('Toolbar.svelte: love.set(): photo_name not found in photo_map');
+			}
 		},
 	};
 
-	let rating = {
+	let rating_display = {
 		val: 0,
 		set(val: number) {
 			this.val = val;
 			star1_selected = val >= 1;
 			star2_selected = val >= 2;
 			star3_selected = val >= 3;
+
+			if ($photo_map.has($current_photo.photo_name)) {
+				$photo_map.get($current_photo.photo_name)!.rating = val;
+			} else {
+				console.error('Toolbar.svelte: rating.set(): photo_name not found in photo_map');
+			}
 		},
 	};
-
-	//   export let filter: () => void;
-	//   export let export_files: () => void;
-
-	//   export let heart: () => void;
-	//   export let star_1: () => void;
-	//   export let star_2: () => void;
-	//   export let star_3: () => void;
 
 	export let center: () => void;
 	export let settings: () => void;
 
 	function filter_clicked() {
 		filter_selected = !filter_selected;
-		// filter_menu_open = !filter_menu_open;
-		// filter_menu.focus();
 	}
 
 	function heart_clicked() {
-		love.set(love.val == 1 ? 0 : 1);
+		love_display.set(love_display.val == 1 ? 0 : 1);
 	}
 
 	function xcross_clicked() {
-		love.set(love.val == -1 ? 0 : -1);
+		love_display.set(love_display.val == -1 ? 0 : -1);
 	}
 
 	function star1_clicked() {
-		if (rating.val == 1) {
-			rating.set(0);
+		if (rating_display.val == 1) {
+			rating_display.set(0);
 		} else {
-			rating.set(1);
+			rating_display.set(1);
 		}
 	}
 
 	function star2_clicked() {
-		if (rating.val == 2) {
-			rating.set(0);
+		if (rating_display.val == 2) {
+			rating_display.set(0);
 		} else {
-			rating.set(2);
+			rating_display.set(2);
 		}
 	}
 
 	function star3_clicked() {
-		if (rating.val == 3) {
-			rating.set(0);
+		if (rating_display.val == 3) {
+			rating_display.set(0);
 		} else {
-			rating.set(3);
+			rating_display.set(3);
 		}
 	}
 
 	onMount(() => {
 		// TODO: need flag for if any window or menu is focused, e.g. goto menu, settings menu, filter menu, etc.
+		// TODO: have backspace remove everything
+		// TODO: have ESC remove sentiment
 		document.addEventListener('keydown', (event) => {
 			if (event.key == '`') {
 				xcross_down = true;
@@ -146,7 +163,7 @@
 				heart_clicked();
 				heart_down = false;
 			} else if (event.key == '0') {
-				rating.set(0);
+				rating_display.set(0);
 			}
 		});
 	});
@@ -237,8 +254,8 @@
 		<div class="goto-menu-hitbox hover-menu-hitbox">
 			<div class="hover-menu">
 				<p>Go to</p>
-				photo #:<input type="text" /> <br>
-				page #: <input type="text" /> <br>
+				photo #:<input type="text" /> <br />
+				page #: <input type="text" /> <br />
 				<hr />
 				filename:<input type="text" />
 			</div>
@@ -357,6 +374,7 @@
 	}
 
 	.heart {
+		transition: all 0.1s ease-in-out;
 		&:active {
 			fill: rgba(255, 130, 192, 0.5);
 			color: rgba(255, 130, 192, 0.5);
@@ -379,6 +397,7 @@
 	}
 
 	.xcross {
+		transition: all 0.1s ease-in-out;
 		&:active {
 			fill: rgba(255, 120, 120, 0.5);
 			color: rgba(255, 120, 120, 0.5);
@@ -401,6 +420,7 @@
 	}
 
 	.star {
+		transition: all 0.1s ease-in-out;
 		&:active {
 			fill: rgba(255, 230, 120, 0.5);
 			color: rgba(255, 230, 120, 0.5);

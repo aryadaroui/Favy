@@ -3,6 +3,7 @@
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import ImageBlobReduce from 'image-blob-reduce';
 	import { status } from '$lib/stores';
+	
 
 	import ArrowRight from '$lib/icons/ArrowRight.svelte';
 	import ArrowLeft from '$lib/icons/ArrowLeft.svelte';

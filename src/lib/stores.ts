@@ -1,12 +1,15 @@
 import { writable } from 'svelte/store';
 
+export enum Sentiment {
+	Hate = -1,
+	Neutral = 0,
+	Love = 1
+}
+
 export type PhotoName = string;
 export type PhotoInfo = {
-	hate: boolean,
 	rating: number,
-	love: boolean,
-	thumbnail: Blob | null,
-	idx: number,
+	love: Sentiment,
 };
 export type Filter = {
 	hate: {
@@ -69,8 +72,8 @@ const initial_status = {
 		idx: 0,
 		len: 0,
 	},
-	text:' '
-}
+	text: ' '
+};
 
 
 export const workspace_dir = writable('');

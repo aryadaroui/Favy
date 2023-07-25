@@ -5,6 +5,8 @@
 	import { readDir } from '@tauri-apps/api/fs';
 	import type { FileEntry } from '@tauri-apps/api/fs';
 
+	import { Sentiment } from '$lib/stores';
+
 	import Modal from '$lib/Modal.svelte';
 
 	import ImageViewer from '$lib/ImageViewer.svelte';
@@ -45,13 +47,11 @@
 				files.forEach((file, idx) => {
 					// SET photo_map store
 					$photo_map.set(file, {
-						hate: false,
 						rating: 0,
-						love: false,
-						thumbnail: null,
-						idx: idx,
+						love: Sentiment.Neutral,
 					});
 				});
+				window.photo_map = $photo_map;
 				files = null; // clear files array to prevent bugs. use photo_names instead
 
 				// SET current_photo store
@@ -79,18 +79,14 @@
 	}
 
 	function update_current_photo_by_name(photo_name: string) {
-		const idx = $photo_map.get(photo_name)?.idx;
+		// const idx = $photo_map.get(photo_name);
 		image_viewer.center();
 
-		if (idx != undefined) {
-			$current_photo = {
-				idx: idx,
-				photo_name: photo_name,
-			};
-			image_viewer.set_image($current_photo.photo_name);
-		} else {
-			console.error('/:update_current_photo_by_name(): photo_name not found in photo_map');
-		}
+		$current_photo = {
+			idx: $photo_names.indexOf(photo_name),
+			photo_name: photo_name,
+		};
+		image_viewer.set_image($current_photo.photo_name);
 	}
 
 	function filter(photo_name: string) {

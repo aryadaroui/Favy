@@ -22,6 +22,7 @@
 
 	let image_viewer: ImageViewer;
 	let export_modal: Modal;
+	let export_panel: Export;
 	// let reel: Reel;
 	let reel: Reel;
 
@@ -35,13 +36,23 @@
 				$workspace_dir = selecton.toString() + '/'; // SET workspace_dir store
 
 				// TODO: turn this load into a function
-				let data = await readTextFile($workspace_dir + 'photo_map.favy');
-				if (data) {
-					$photo_map = new Map(JSON.parse(data));
-					console.log('loaded photo_map.favy');
-				} else {
-					console.log("couldn't load photo_map.favy");
-				}
+
+				readTextFile($workspace_dir + 'photo_map.favy')
+					.then((data) => {
+						$photo_map = new Map(JSON.parse(data));
+						console.log('loaded photo_map.favy');
+					})
+					.catch((err) => {
+						console.log("couldn't load photo_map.favy");
+					});
+
+				// let data = await readTextFile($workspace_dir + 'photo_map.favy');
+				// if (data) {
+				// 	$photo_map = new Map(JSON.parse(data));
+				// 	console.log('loaded photo_map.favy');
+				// } else {
+				// 	console.log("couldn't load photo_map.favy");
+				// }
 
 				// get only the .name field of each FileEntry
 				files = (await readDir($workspace_dir, { recursive: false })).map(
@@ -78,7 +89,7 @@
 				image_viewer.set_image($current_photo.photo_name);
 
 				// reel.set($photo_names.filter(filter));
-				reel.set($workspace_dir, $photo_names.filter(filter), 2);
+				reel.set($workspace_dir, $photo_names.filter(filter), 100);
 			} else {
 			}
 		});
@@ -178,7 +189,7 @@
 
 <main id="windowframe">
 	<Modal bind:this={export_modal}>
-		<Export />
+		<Export bind:this={export_panel} />
 	</Modal>
 
 	<ImageViewer bind:this={image_viewer} />
@@ -190,6 +201,7 @@
 		}}
 		settings={open_settings}
 		on_export_clicked={() => {
+			export_panel.check_dirs();
 			export_modal.open();
 		}} />
 

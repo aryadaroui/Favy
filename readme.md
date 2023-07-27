@@ -2,7 +2,7 @@
 
 # Favy
 
-A simple, cross-platform photo gallery organizer.
+A simple, cross-platform photo organizer.
 
 Quickly go through your photos, rate them, and filter them in your filesystem.
 
@@ -10,7 +10,7 @@ Quickly go through your photos, rate them, and filter them in your filesystem.
 
 ## Usage
 
-*Currently usable, but not officially distributed yet!*
+*Currently useable, but not officially distributed yet!*
 
 To test development version:
 ```zsh
@@ -19,6 +19,18 @@ npm run tauri dev
 
 To build:
 ```zsh
-npm run tauri build
+npm run tauri build # executable found in ./src-tauri/target/
 ```
 
+## Technology credits
+
+Favy is built with [Rust](https://www.rust-lang.org/), [Svelte](https://svelte.dev/), and [TypeScript](https://www.typescriptlang.org/) (RuST stack? 🤔) with the frameworks:
+
+- [Tauri](https://tauri.app/) (Rust)
+- [SvelteKit](https://kit.svelte.dev/) (Svelte / TypeScript)
+
+## License
+
+MIT License where applicable.
+
+You're welcome to reuse, rework, and redistribute this code!

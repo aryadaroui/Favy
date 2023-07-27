@@ -78,6 +78,8 @@
 
 				image_viewer.set_image($current_photo.photo_name);
 
+
+				// TODO: Filter photos ASAP!
 				reel.set($workspace_dir, $photo_names.filter(filter), 100);
 
 				window.favy = {};

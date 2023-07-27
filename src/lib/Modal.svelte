@@ -65,6 +65,7 @@
 
 		width: 400px;
 		max-height: 600px;
+		overflow-y: scroll;
 
 		background-color: rgba(0, 0, 0, 0);
 		z-index: 3;

@@ -24,7 +24,7 @@ npm run tauri build # executable found in ./src-tauri/target/
 
 ## Technology credits
 
-Favy is built with [Rust](https://www.rust-lang.org/), [Svelte](https://svelte.dev/), and [TypeScript](https://www.typescriptlang.org/) (RuST stack? 🤔) with the frameworks:
+Favy is built with [Rust](https://www.rust-lang.org/), [Svelte](https://svelte.dev/), and [TypeScript](https://www.typescriptlang.org/) (RuST? 🤔) with the frameworks:
 
 - [Tauri](https://tauri.app/) (Rust)
 - [SvelteKit](https://kit.svelte.dev/) (Svelte / TypeScript)
@@ -32,5 +32,3 @@ Favy is built with [Rust](https://www.rust-lang.org/), [Svelte](https://svelte.d
 ## License
 
 MIT License where applicable.
-
-You're welcome to reuse, rework, and redistribute this code!

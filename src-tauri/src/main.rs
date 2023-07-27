@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::fs::{copy, remove_file};
+use std::fs;
 use tauri::Manager;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
@@ -32,9 +32,48 @@ async fn export(
     photos: FeedbackArray,
     settings: ExportSettings,
 ) -> Result<(), String> {
+
+    // create directories if they don't exist
+    if settings.heart {
+        match fs::create_dir_all(dir.clone() + "love") {
+            Ok(_) => {}
+            Err(e) => return Err(format!("Failed to create ./love: {}", e)),
+        };
+    }
+
+    if settings.star3 {
+        match fs::create_dir_all(dir.clone() + "star3") {
+            Ok(_) => {}
+            Err(e) => return Err(format!("Failed to create ./star3: {}", e)),
+        };
+    }
+
+    if settings.star2 {
+        match fs::create_dir_all(dir.clone() + "star2") {
+            Ok(_) => {}
+            Err(e) => return Err(format!("Failed to create ./star2: {}", e)),
+        };
+    }
+
+    if settings.star1 {
+        match fs::create_dir_all(dir.clone() + "star1") {
+            Ok(_) => {}
+            Err(e) => return Err(format!("Failed to create ./star1: {}", e)),
+        };
+    }
+
+    if settings.hate {
+        match fs::create_dir_all(dir.clone() + "hate") {
+            Ok(_) => {}
+            Err(e) => return Err(format!("Failed to create ./hate: {}", e)),
+        };
+    }
+
+
+    // copy photos to their respective directories
     for photo in &photos {
         if photo.love == 1 && settings.heart {
-            match copy(
+            match fs::copy(
                 dir.clone() + &photo.name,
                 dir.clone() + "love/" + &photo.name,
             ) {
@@ -44,7 +83,7 @@ async fn export(
         }
 
         if photo.rating == 3 && settings.star3 {
-            match copy(
+            match fs::copy(
                 dir.clone() + &photo.name,
                 dir.clone() + "star3/" + &photo.name,
             ) {
@@ -54,7 +93,7 @@ async fn export(
         }
 
         if photo.rating == 2 && settings.star2 {
-            match copy(
+            match fs::copy(
                 dir.clone() + &photo.name,
                 dir.clone() + "star2/" + &photo.name,
             ) {
@@ -64,7 +103,7 @@ async fn export(
         }
 
         if photo.rating == 1 && settings.star1 {
-            match copy(
+            match fs::copy(
                 dir.clone() + &photo.name,
                 dir.clone() + "star1/" + &photo.name,
             ) {
@@ -74,7 +113,7 @@ async fn export(
         }
 
         if photo.love == -1 && settings.hate {
-            match copy(
+            match fs::copy(
                 dir.clone() + &photo.name,
                 dir.clone() + "hate/" + &photo.name,
             ) {
@@ -84,9 +123,11 @@ async fn export(
         }
     }
 
+    // delete original photos
+    // TODO: make this move to trash instead of deleting
     if settings.delete_original {
         for photo in &photos {
-            match remove_file(dir.clone() + &photo.name) {
+            match fs::remove_file(dir.clone() + &photo.name) {
                 Ok(_) => {}
                 Err(e) => return Err(format!("Failed to delete {}: {}", photo.name, e)),
             };

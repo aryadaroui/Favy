@@ -2,7 +2,9 @@
 	import { invoke } from '@tauri-apps/api/tauri';
 	import { exists } from '@tauri-apps/api/fs';
 	import { workspace_dir, photo_map } from './stores';
-	import { onMount } from 'svelte';
+
+	import Heart from '$lib/icons/Heart.svelte';
+	import Stars3 from '$lib/icons/Stars3.svelte';
 
 	let export_node: HTMLDivElement;
 
@@ -96,11 +98,31 @@
 	<h1>Export</h1>
 	<p>Copy selected photos to subdirectories</p>
 
-	<button>Heart</button> Copy dir: ./love <br />
-	<button>Star3</button> Copy dir: ./star3 <br />
-	<button>Star2</button> Copy dir: ./star2 <br />
-	<button>Star1</button> Copy dir: ./star1 <br />
-	<button>Hate</button> Copy dir: ./hate <br />
+	<div class="row">
+		<button
+			on:click={() => {
+				settings.heart = !settings.heart;
+				settings.update();
+			}}
+			class:selected={settings.heart}><Heart /></button>
+		Copy dir: ./love <br />
+	</div>
+
+	<div class="row">
+		<button><Stars3 /></button> Copy dir: ./star3 <br />
+	</div>
+
+	<div class="row">
+		<button>Star2</button> Copy dir: ./star2 <br />
+	</div>
+
+	<div class="row">
+		<button>Star1</button> Copy dir: ./star1 <br />
+	</div>
+
+	<div class="row">
+		<button>Hate</button> Copy dir: ./hate <br />
+	</div>
 
 	<button
 		on:click={() => {
@@ -138,6 +160,12 @@
 		border: 1px solid #aaa;
 	}
 
+	button.selected {
+		background-color: #ccc;
+		fill: #ccc;
+		color: #111;
+	}
+
 	button.export {
 		width: 100px;
 		/* background-color: rgba(0, 191, 255, 0.2); */
@@ -146,6 +174,11 @@
 
 	div {
 		color: #ccc;
+	}
+
+	div.row {
+		display: flex;
+		align-items: center;
 	}
 
 	div.export_panel {

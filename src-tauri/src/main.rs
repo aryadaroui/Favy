@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::fs::{copy, remove_file};
 use tauri::Manager;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
@@ -9,7 +10,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 struct PhotoFeedback {
     name: String,
-    love: i8,
+    love: i8, // TODO: change this to sentiment
     rating: i8,
 }
 
@@ -23,38 +24,76 @@ struct ExportSettings {
     delete_original: bool,
 }
 
-// kind of redundant with Result, but I'm leaving it like this in case
-// I have more statuses I want to add later
-#[derive(Serialize)]
-enum TaskResult {
-    Done,
-    Failed,
-}
-
 type FeedbackArray = Vec<PhotoFeedback>;
 
 #[tauri::command]
-async fn export(dir: String, photos: FeedbackArray, settings: ExportSettings, ) -> Result<TaskResult, String> {
-    println!("Exporting...\n");
-
-
-
-    // print all the export settings
-    println!("Export Settings:");
-    println!("- Heart: {}", settings.heart);
-    println!("- Star 3: {}", settings.star3);
-    println!("- Star 2: {}", settings.star2);
-    println!("- Star 1: {}", settings.star1);
-    println!("- Hate: {}", settings.hate);
-    println!("- Delete Original: {}\n", settings.delete_original);
-
-    // iterate through photos
+async fn export(
+    dir: String,
+    photos: FeedbackArray,
+    settings: ExportSettings,
+) -> Result<(), String> {
     for photo in &photos {
-        println!("Filename: {}", photo.name);
-        println!("- Love: {}, Rating: {}\n", photo.love, photo.rating);
+        if photo.love == 1 && settings.heart {
+            match copy(
+                dir.clone() + &photo.name,
+                dir.clone() + "love/" + &photo.name,
+            ) {
+                Ok(_) => {}
+                Err(e) => return Err(format!("Failed to copy {} to ./love: {}", photo.name, e)),
+            };
+        }
+
+        if photo.rating == 3 && settings.star3 {
+            match copy(
+                dir.clone() + &photo.name,
+                dir.clone() + "star3/" + &photo.name,
+            ) {
+                Ok(_) => {}
+                Err(e) => return Err(format!("Failed to copy {} to ./star3: {}", photo.name, e)),
+            };
+        }
+
+        if photo.rating == 2 && settings.star2 {
+            match copy(
+                dir.clone() + &photo.name,
+                dir.clone() + "star2/" + &photo.name,
+            ) {
+                Ok(_) => {}
+                Err(e) => return Err(format!("Failed to copy {} to ./star2: {}", photo.name, e)),
+            };
+        }
+
+        if photo.rating == 1 && settings.star1 {
+            match copy(
+                dir.clone() + &photo.name,
+                dir.clone() + "star1/" + &photo.name,
+            ) {
+                Ok(_) => {}
+                Err(e) => return Err(format!("Failed to copy {} to ./star1: {}", photo.name, e)),
+            };
+        }
+
+        if photo.love == -1 && settings.hate {
+            match copy(
+                dir.clone() + &photo.name,
+                dir.clone() + "hate/" + &photo.name,
+            ) {
+                Ok(_) => {}
+                Err(e) => return Err(format!("Failed to copy {} to ./hate: {}", photo.name, e)),
+            };
+        }
     }
 
-    Ok(TaskResult::Done)
+    if settings.delete_original {
+        for photo in &photos {
+            match remove_file(dir.clone() + &photo.name) {
+                Ok(_) => {}
+                Err(e) => return Err(format!("Failed to delete {}: {}", photo.name, e)),
+            };
+        }
+    }
+
+    Ok(())
 }
 
 fn main() {

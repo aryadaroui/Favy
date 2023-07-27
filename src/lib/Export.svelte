@@ -73,11 +73,11 @@
 		// make sure to save user progress before export.
 
 		export_status = ExportStatus.Working;
-
+		const dir = $workspace_dir; // need to make a copy because $workspace_dir is a store; tauri doesn't like it.
 		const photos = Array.from($photo_map, ([name, value]) => ({ name, ...value }));
 
 		invoke('export', {
-			$workspace_dir,
+			dir,
 			photos,
 			settings,
 		})

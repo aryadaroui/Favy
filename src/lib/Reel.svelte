@@ -85,6 +85,7 @@
 
 	export function set(new_dir: string, new_photo_names: PhotoName[], page_size: number) {
 		dir = new_dir;
+		photo_table = [];
 		// populate photo_table with each subarray being a page of photos with max length of page_size
 		for (let i = 0; i < new_photo_names.length; i += page_size) {
 			photo_table.push(new_photo_names.slice(i, i + page_size));

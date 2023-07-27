@@ -37,22 +37,14 @@
 
 				// TODO: turn this load into a function
 
-				readTextFile($workspace_dir + 'photo_map.favy')
-					.then((data) => {
-						$photo_map = new Map(JSON.parse(data));
-						console.log('loaded photo_map.favy');
-					})
-					.catch((err) => {
-						console.log("couldn't load photo_map.favy");
-					});
-
-				// let data = await readTextFile($workspace_dir + 'photo_map.favy');
-				// if (data) {
-				// 	$photo_map = new Map(JSON.parse(data));
-				// 	console.log('loaded photo_map.favy');
-				// } else {
-				// 	console.log("couldn't load photo_map.favy");
-				// }
+				try {
+					let result = await readTextFile($workspace_dir + 'photo_map.favy');
+					$photo_map = new Map(JSON.parse(result));
+					console.log('loaded photo_map.favy');
+				} catch (error) {
+					$photo_map = new Map(); // TODO; add type annotation here
+					console.log("couldn't load photo_map.favy");
+				}
 
 				// get only the .name field of each FileEntry
 				files = (await readDir($workspace_dir, { recursive: false })).map(
@@ -67,7 +59,7 @@
 
 				$photo_names = files; // SET photo_names store
 
-				let new_files = files.filter((file) => !$photo_map.has(file));
+				let new_files = files.filter((file) => !$photo_map.has(file)); // get files not in photo_map. purpose is to prevent duplicates from loaded .favy file
 
 				new_files.forEach((file, idx) => {
 					// SET photo_map store
@@ -76,8 +68,7 @@
 						love: Sentiment.Neutral,
 					});
 				});
-				window.photo_map = $photo_map;
-				files = null; // clear files array to prevent bugs. use photo_names instead
+				// files = null; // clear files array to prevent bugs. use photo_names instead
 
 				// SET current_photo store
 				$current_photo = {
@@ -85,11 +76,16 @@
 					photo_name: $photo_names[0],
 				};
 
-				// const path_str = convertFileSrc(files[img_idx].path);
 				image_viewer.set_image($current_photo.photo_name);
 
-				// reel.set($photo_names.filter(filter));
 				reel.set($workspace_dir, $photo_names.filter(filter), 100);
+
+				window.favy = {};
+				window.favy.workspace_dir = $workspace_dir;
+				window.favy.photo_map = $photo_map;
+				window.favy.photo_names = $photo_names;
+				window.favy.current_photo = $current_photo;
+
 			} else {
 			}
 		});

@@ -1,11 +1,12 @@
-<img src="https://raw.githubusercontent.com/aryadaroui/Favy/main/favy.png" width="160" height="160" alt="sharp logo" align="right">
+<img src="https://raw.githubusercontent.com/aryadaroui/Favy/main/docs/assets/favy-icon-small.webp" width="160" height="160" alt="Favy icon" align="right">
 
 # Favy
 
 A simple, cross-platform photo gallery organizer.
 
-Quickly go through your latest photos, rate them, favorite them, and filter them in your filesystem all at once.
+Quickly go through your photos, rate them, and filter them in your filesystem.
 
+![Favy screenshot](https://raw.githubusercontent.com/aryadaroui/Favy/main/docs/assets/screenshot.webp)
 
 ## Usage
 

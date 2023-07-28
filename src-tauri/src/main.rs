@@ -6,20 +6,18 @@ mod export;
 use tauri::Manager;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
-
-
 fn main() {
-    tauri::Builder::default()
-        .setup(|app| {
-            let window = app.get_window("main").unwrap();
+	tauri::Builder::default()
+		.setup(|app| {
+			let window = app.get_window("main").unwrap();
 
-            #[cfg(target_os = "macos")]
-            apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, Some(16.0))
-                .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+			#[cfg(target_os = "macos")]
+			apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, Some(16.0))
+				.expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
 
-            Ok(())
-        })
-        .invoke_handler(tauri::generate_handler![export::export])
-        .run(tauri::generate_context!())
-        .expect("Fatal error while running Favy.");
+			Ok(())
+		})
+		.invoke_handler(tauri::generate_handler![export::export])
+		.run(tauri::generate_context!())
+		.expect("Fatal error while running Favy.");
 }

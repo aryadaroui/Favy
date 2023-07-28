@@ -29,6 +29,32 @@ Favy is built with [Rust](https://www.rust-lang.org/), [Svelte](https://svelte.d
 - [Tauri](https://tauri.app/) (Rust)
 - [SvelteKit](https://kit.svelte.dev/) (Svelte / TypeScript)
 
+This project also uses:
+
+- [Vite](https://vitejs.dev/)
+- [Serde](https://serde.rs/)
+- [Sharp](https://sharp.pixelplumbing.com/)
+- [Sass (SCSS)](https://sass-lang.com/)
+- [Prettier](https://prettier.io/)
+- [Node.js](https://nodejs.org/en)
+- [ESlint](https://eslint.org/)
+- [window-vibrancy](https://github.com/tauri-apps/window-vibrancy)
+
 ## License
 
-MIT License where applicable.
+Copyright 2023 - Arya "Dee" Daroui
+
+Don't redistribute or sell this project. *Otherwise*, MIT/Apache v2.0 Licenses apply.
+
+In other words, you are welcome to...
+
+- Fork, edit, and build this project for personal use, publicly or privately
+- Contribute your changes back to this repository
+- Reuse and rework *parts* of this codebase for anything else
+
+But...
+
+- Do not redistribute this project or its executables--especially not for money
+- Do not take significant enough parts of the codebase that you are effectively redistributing it :-/
+
+The intent is that this repo is remain the official home of this project, and that it stays free.

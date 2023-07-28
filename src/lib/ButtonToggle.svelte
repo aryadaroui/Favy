@@ -81,7 +81,6 @@
 		color: #111;
 		// color: rgba(255, 0, 115, 1.0);
 
-		// fill: #ccc;
 		border: 1px solid transparent;
 
 		transition-property: background-color, color;

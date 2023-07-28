@@ -56,11 +56,11 @@
 	};
 
 	let settings = {
-		heart: true,
-		star3: true,
+		heart: false,
+		star3: false,
 		star2: false,
 		star1: false,
-		hate: false,
+		disliked: false,
 		delete_original: false,
 		update() {
 			settings = settings;
@@ -81,8 +81,8 @@
 			settings.star1 = val;
 			settings.update();
 		},
-		set_hate(val: boolean) {
-			settings.hate = val;
+		set_disliked(val: boolean) {
+			settings.disliked = val;
 			settings.update();
 		},
 		set_delete_original(val: boolean) {
@@ -133,7 +133,9 @@
 				settings.set_heart(is_on_after);
 			}}>
 			<Heart />
-		</ButtonToggle> Copy dir: ./love <br />
+		</ButtonToggle>
+		<span class="info-text" class:info-not-selected={!settings.heart}
+			>Copy dir: <code>./favorite</code></span> <br />
 	</div>
 
 	<div class="row">
@@ -142,7 +144,9 @@
 				settings.set_star3(is_on_after);
 			}}>
 			<Stars3 />
-		</ButtonToggle> Copy dir: ./star3 <br />
+		</ButtonToggle>
+		<span class="info-text" class:info-not-selected={!settings.star3}
+			>Copy dir: <code>./star3</code></span> <br />
 	</div>
 
 	<div class="row">
@@ -151,7 +155,9 @@
 				settings.set_star2(is_on_after);
 			}}>
 			<Stars2 />
-		</ButtonToggle> Copy dir: ./star2 <br />
+		</ButtonToggle>
+		<span class="info-text" class:info-not-selected={!settings.star2}
+			>Copy dir: <code>./star2</code></span> <br />
 	</div>
 
 	<div class="row">
@@ -160,16 +166,21 @@
 				settings.set_star1(is_on_after);
 			}}>
 			<Stars1 />
-		</ButtonToggle> Copy dir: ./star1 <br />
+		</ButtonToggle>
+		<span class="info-text" class:info-not-selected={!settings.star1}
+			>Copy dir: <code>./star1</code></span> <br />
 	</div>
 
 	<div class="row">
 		<ButtonToggle
 			on_click={(is_on_after) => {
-				settings.set_hate(is_on_after);
+				settings.set_disliked(is_on_after);
 			}}>
 			<Xcross />
-		</ButtonToggle> Copy dir: ./hate <br />
+		</ButtonToggle>
+		<span class="info-text" class:info-not-selected={!settings.disliked}
+			>Copy dir: <code>./disliked</code></span>
+		<br />
 	</div>
 
 	<div class="row">
@@ -179,7 +190,9 @@
 			}}>
 			<Trash />
 		</ButtonToggle>
-		<span class:warning={settings.delete_original}
+		<span
+			class:info-not-selected={!settings.delete_original}
+			class:warning={settings.delete_original}
 			>Original files
 			{#if settings.delete_original}
 				WILL
@@ -189,16 +202,18 @@
 			be deleted.</span> <br />
 	</div>
 
-	{#if $workspace_dir != ''}
-		{#if dirs.existing.length != 0}
-			<p class="warning">
-				Target dirs: [./{dirs.existing.join(', ./')}] already exist. Existing files will be
-				overwritten and directory will be polluted.
-			</p>
+	<div class="export-container">
+		{#if $workspace_dir != ''}
+			{#if dirs.existing.length != 0}
+				<p class="warning">
+					Target dirs: [./{dirs.existing.join(', ./')}] already exist. Existing files will be
+					overwritten and directory will be polluted.
+				</p>
+			{/if}
+		{:else}
+			<p class="info-text">No workspace directory selected.</p>
 		{/if}
-	{:else}
-		<p>No workspace directory selected.</p>
-	{/if}
+	</div>
 
 	<div class="export-container">
 		<button on:click={handle_export} class="export"> Export </button>
@@ -206,6 +221,11 @@
 </div>
 
 <style lang="scss">
+
+	code {
+		font-size: 1.1em;
+	}
+
 	.export-container {
 		display: flex;
 		justify-content: center;
@@ -228,16 +248,28 @@
 		&:active {
 			background-color: #065a9a;
 		}
-
 	}
 
 	div {
 		color: #ccc;
 	}
 
+	.info-text {
+		margin-left: 8px;
+	}
+
+	.info-not-selected {
+		color: #777;
+		margin-left: 8px;
+	}
+
 	div.row {
 		display: flex;
 		align-items: center;
+	}
+
+	p {
+		margin: 8px;
 	}
 
 	div.export_panel {
@@ -248,5 +280,6 @@
 
 	.warning {
 		color: rgb(255, 191, 0);
+		margin-left: 8px;
 	}
 </style>

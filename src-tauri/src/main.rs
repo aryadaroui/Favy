@@ -21,7 +21,7 @@ struct ExportSettings {
     star3: bool,
     star2: bool,
     star1: bool,
-    disliked: bool,
+    dislike: bool,
     delete_original: bool,
 }
 
@@ -62,7 +62,7 @@ async fn export(
         };
     }
 
-    if settings.disliked {
+    if settings.dislike {
         match fs::create_dir_all(dir.clone() + "hate") {
             Ok(_) => {}
             Err(e) => return Err(format!("Failed to create ./hate: {}", e)),
@@ -111,7 +111,7 @@ async fn export(
             };
         }
 
-        if photo.love == -1 && settings.disliked {
+        if photo.love == -1 && settings.dislike {
             match fs::copy(
                 dir.clone() + &photo.name,
                 dir.clone() + "hate/" + &photo.name,
@@ -128,7 +128,7 @@ async fn export(
                 || (photo.rating == 3 && settings.star3)
                 || (photo.rating == 2 && settings.star2)
                 || (photo.rating == 1 && settings.star1)
-                || (photo.love == -1 && settings.disliked);
+                || (photo.love == -1 && settings.dislike);
 
             if trashable {
                 match trash::delete(dir.clone() + &photo.name) {

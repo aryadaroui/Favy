@@ -60,7 +60,7 @@
 		star3: false,
 		star2: false,
 		star1: false,
-		disliked: false,
+		dislike: false,
 		delete_original: false,
 		update() {
 			settings = settings;
@@ -82,7 +82,7 @@
 			settings.update();
 		},
 		set_disliked(val: boolean) {
-			settings.disliked = val;
+			settings.dislike = val;
 			settings.update();
 		},
 		set_delete_original(val: boolean) {
@@ -178,7 +178,7 @@
 			}}>
 			<Xcross />
 		</ButtonToggle>
-		<span class="info-text" class:info-not-selected={!settings.disliked}
+		<span class="info-text" class:info-not-selected={!settings.dislike}
 			><code>./disliked</code></span>
 		<br />
 	</div>

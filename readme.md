@@ -39,6 +39,7 @@ This project also uses:
 - [Node.js](https://nodejs.org/en)
 - [ESlint](https://eslint.org/)
 - [window-vibrancy](https://github.com/tauri-apps/window-vibrancy)
+- [trash-rs](https://github.com/Byron/trash-rs)
 
 ## License
 
@@ -57,4 +58,4 @@ But...
 - Do not redistribute this project or its executables--especially not for money
 - Do not take significant enough parts of the codebase that you are effectively redistributing it :-/
 
-The intent is that this repo is remain the official home of this project.
+The intent is that this repository remain the official home of this project. Please see the [license.txt](https://github.com/aryadaroui/Favy/blob/main/license.txt) for more.

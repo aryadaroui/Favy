@@ -14,6 +14,9 @@
 	import Crosshair from '$lib/icons/Crosshair.svelte';
 	import Cog from '$lib/icons/Cog.svelte';
 
+	import ButtonToggle from './ButtonToggle.svelte'; // temporary
+	import Stars3 from './icons/Stars3.svelte';
+
 	import { current_photo, filter, status, photo_names, photo_map } from '$lib/stores';
 	import { onMount } from 'svelte';
 
@@ -408,7 +411,7 @@
 		// align-items: center;
 		// height: 30px;
 		// width: calc(100% - 8px);
-		padding: 6px 6px;
+		// padding: 4px 4px;
 		// padding-right: 20px;
 		background-color: rgba(16, 16, 16, 1);
 
@@ -503,6 +506,7 @@
 		flex-direction: row;
 		align-items: center;
 		height: 30px;
+		padding: 6px 6px;
 		white-space: nowrap;
 		// overflow: hidden;
 	}

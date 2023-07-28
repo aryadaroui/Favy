@@ -60,7 +60,7 @@
 		set(photo_idx: number, page_idx: number, scroll: boolean = true) {
 			// TODO: use svelte's builtin class directives for styling. unfortunately i can't get it to update at the moment.
 
-			document.getElementById(current.photo.name)?.classList.remove('selected');
+			document.getElementById(current.photo.name)?.classList.remove('reel-selected-photo');
 			this.photo.idx = photo_idx;
 			this.photo.name = photo_table[page_idx][photo_idx];
 			this.page_idx = page_idx;
@@ -76,7 +76,7 @@
 			$status.page.len = photo_table.length;
 			$status.text = '';
 
-			document.getElementById(current.photo.name)?.classList.add('selected');
+			document.getElementById(current.photo.name)?.classList.add('reel-selected-photo');
 		},
 	};
 
@@ -254,7 +254,7 @@
 		observer.observe(img); // intersection observer
 
 		if (img.id == current.photo.name) {
-			img.classList.add('selected');
+			img.classList.add('reel-selected-photo');
 			scroll_to_photo(current.photo.name);
 		}
 	}
@@ -470,7 +470,7 @@
 		}
 	}
 
-	:global(.selected) {
+	:global(.reel-selected-photo) {
 		border: 1px solid white !important;
 	}
 </style>

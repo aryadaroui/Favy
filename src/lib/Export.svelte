@@ -5,6 +5,11 @@
 
 	import Heart from '$lib/icons/Heart.svelte';
 	import Stars3 from '$lib/icons/Stars3.svelte';
+	import Stars2 from '$lib/icons/Stars2.svelte';
+	import Stars1 from '$lib/icons/Stars1.svelte';
+	import Xcross from '$lib/icons/Xcross.svelte';
+	import Trash from '$lib/icons/Trash.svelte';
+	import ButtonToggle from '$lib/ButtonToggle.svelte';
 
 	let export_node: HTMLDivElement;
 
@@ -60,6 +65,30 @@
 		update() {
 			settings = settings;
 		},
+		set_heart(val: boolean) {
+			settings.heart = val;
+			settings.update();
+		},
+		set_star3(val: boolean) {
+			settings.star3 = val;
+			settings.update();
+		},
+		set_star2(val: boolean) {
+			settings.star2 = val;
+			settings.update();
+		},
+		set_star1(val: boolean) {
+			settings.star1 = val;
+			settings.update();
+		},
+		set_hate(val: boolean) {
+			settings.hate = val;
+			settings.update();
+		},
+		set_delete_original(val: boolean) {
+			settings.delete_original = val;
+			settings.update();
+		},
 	};
 
 	enum ExportStatus {
@@ -99,45 +128,66 @@
 	<p>Copy selected photos to subdirectories</p>
 
 	<div class="row">
-		<button
-			on:click={() => {
-				settings.heart = !settings.heart;
-				settings.update();
-			}}
-			class:selected={settings.heart}><Heart /></button>
-		Copy dir: ./love <br />
+		<ButtonToggle
+			on_click={(is_on_after) => {
+				settings.set_heart(is_on_after);
+			}}>
+			<Heart />
+		</ButtonToggle> Copy dir: ./love <br />
 	</div>
 
 	<div class="row">
-		<button><Stars3 /></button> Copy dir: ./star3 <br />
+		<ButtonToggle
+			on_click={(is_on_after) => {
+				settings.set_star3(is_on_after);
+			}}>
+			<Stars3 />
+		</ButtonToggle> Copy dir: ./star3 <br />
 	</div>
 
 	<div class="row">
-		<button>Star2</button> Copy dir: ./star2 <br />
+		<ButtonToggle
+			on_click={(is_on_after) => {
+				settings.set_star2(is_on_after);
+			}}>
+			<Stars2 />
+		</ButtonToggle> Copy dir: ./star2 <br />
 	</div>
 
 	<div class="row">
-		<button>Star1</button> Copy dir: ./star1 <br />
+		<ButtonToggle
+			on_click={(is_on_after) => {
+				settings.set_star1(is_on_after);
+			}}>
+			<Stars1 />
+		</ButtonToggle> Copy dir: ./star1 <br />
 	</div>
 
 	<div class="row">
-		<button>Hate</button> Copy dir: ./hate <br />
+		<ButtonToggle
+			on_click={(is_on_after) => {
+				settings.set_hate(is_on_after);
+			}}>
+			<Xcross />
+		</ButtonToggle> Copy dir: ./hate <br />
 	</div>
 
-	<button
-		on:click={() => {
-			settings.delete_original = !settings.delete_original;
-			settings.update();
-		}}
-		class="delete-original">Delete original?</button>
-	<span class:warning={settings.delete_original}
-		>Original files
-		{#if settings.delete_original}
-			WILL
-		{:else}
-			will not
-		{/if}
-		be deleted.</span> <br />
+	<div class="row">
+		<ButtonToggle
+			on_click={(is_on_after) => {
+				settings.set_delete_original(is_on_after);
+			}}>
+			<Trash />
+		</ButtonToggle>
+		<span class:warning={settings.delete_original}
+			>Original files
+			{#if settings.delete_original}
+				WILL
+			{:else}
+				will not
+			{/if}
+			be deleted.</span> <br />
+	</div>
 
 	{#if $workspace_dir != ''}
 		{#if dirs.existing.length != 0}
@@ -150,26 +200,35 @@
 		<p>No workspace directory selected.</p>
 	{/if}
 
-	<button on:click={handle_export} class="export"> Export </button>
+	<div class="export-container">
+		<button on:click={handle_export} class="export"> Export </button>
+	</div>
 </div>
 
-<style>
-	button {
-		margin: 0.5rem;
-		height: 30px;
-		border: 1px solid #aaa;
-	}
-
-	button.selected {
-		background-color: #ccc;
-		fill: #ccc;
-		color: #111;
+<style lang="scss">
+	.export-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	button.export {
 		width: 100px;
-		/* background-color: rgba(0, 191, 255, 0.2); */
+		padding: 0 16px;
+		height: 36px;
+		font-size: medium;
+
 		border: 1px solid dodgerblue;
+
+		&:hover {
+			background-color: #0b2d47;
+			color: #ddd;
+		}
+
+		&:active {
+			background-color: #065a9a;
+		}
+
 	}
 
 	div {

@@ -2,6 +2,22 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use trash;
 
+struct SubDirs {
+	love: &'static str,
+	star3: &'static str,
+	star2: &'static str,
+	star1: &'static str,
+	dislike: &'static str,
+}
+
+const SUB_DIRS: SubDirs = SubDirs {
+	love: "love",
+	star3: "star3",
+	star2: "star2",
+	star1: "star1",
+	dislike: "dislike",
+};
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PhotoFeedback {
 	name: String,
@@ -20,22 +36,6 @@ pub struct ExportSettings {
 }
 
 pub type FeedbackArray = Vec<PhotoFeedback>;
-
-struct SubDirs {
-	love: &'static str,
-	star3: &'static str,
-	star2: &'static str,
-	star1: &'static str,
-	dislike: &'static str,
-}
-
-const SUB_DIRS: SubDirs = SubDirs {
-	love: "love",
-	star3: "star3",
-	star2: "star2",
-	star1: "star1",
-	dislike: "dislike",
-};
 
 fn create_dir(setting: bool, dir: String) -> Result<(), String> {
 	if setting {

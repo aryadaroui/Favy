@@ -3,6 +3,7 @@
 
 use std::fs;
 use tauri::Manager;
+use trash;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 use serde::{Deserialize, Serialize};
@@ -16,11 +17,11 @@ struct PhotoFeedback {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct ExportSettings {
-    heart: bool,
+    favorite: bool,
     star3: bool,
     star2: bool,
     star1: bool,
-    hate: bool,
+    disliked: bool,
     delete_original: bool,
 }
 
@@ -32,9 +33,8 @@ async fn export(
     photos: FeedbackArray,
     settings: ExportSettings,
 ) -> Result<(), String> {
-
     // create directories if they don't exist
-    if settings.heart {
+    if settings.favorite {
         match fs::create_dir_all(dir.clone() + "love") {
             Ok(_) => {}
             Err(e) => return Err(format!("Failed to create ./love: {}", e)),
@@ -62,17 +62,16 @@ async fn export(
         };
     }
 
-    if settings.hate {
+    if settings.disliked {
         match fs::create_dir_all(dir.clone() + "hate") {
             Ok(_) => {}
             Err(e) => return Err(format!("Failed to create ./hate: {}", e)),
         };
     }
 
-
     // copy photos to their respective directories
     for photo in &photos {
-        if photo.love == 1 && settings.heart {
+        if photo.love == 1 && settings.favorite {
             match fs::copy(
                 dir.clone() + &photo.name,
                 dir.clone() + "love/" + &photo.name,
@@ -112,7 +111,7 @@ async fn export(
             };
         }
 
-        if photo.love == -1 && settings.hate {
+        if photo.love == -1 && settings.disliked {
             match fs::copy(
                 dir.clone() + &photo.name,
                 dir.clone() + "hate/" + &photo.name,
@@ -123,14 +122,20 @@ async fn export(
         }
     }
 
-    // delete original photos
-    // TODO: make this move to trash instead of deleting
     if settings.delete_original {
         for photo in &photos {
-            match fs::remove_file(dir.clone() + &photo.name) {
-                Ok(_) => {}
-                Err(e) => return Err(format!("Failed to delete {}: {}", photo.name, e)),
-            };
+            let trashable = (photo.love == 1 && settings.favorite)
+                || (photo.rating == 3 && settings.star3)
+                || (photo.rating == 2 && settings.star2)
+                || (photo.rating == 1 && settings.star1)
+                || (photo.love == -1 && settings.disliked);
+
+            if trashable {
+                match trash::delete(dir.clone() + &photo.name) {
+                    Ok(_) => {}
+                    Err(e) => return Err(format!("Failed to move {} to trash: {}", photo.name, e)),
+                }
+            }
         }
     }
 

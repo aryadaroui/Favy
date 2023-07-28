@@ -56,7 +56,7 @@
 	};
 
 	let settings = {
-		heart: false,
+		favorite: false,
 		star3: false,
 		star2: false,
 		star1: false,
@@ -66,7 +66,7 @@
 			settings = settings;
 		},
 		set_heart(val: boolean) {
-			settings.heart = val;
+			settings.favorite = val;
 			settings.update();
 		},
 		set_star3(val: boolean) {
@@ -125,7 +125,7 @@
 
 <div bind:this={export_node} class="export_panel">
 	<h1>Export</h1>
-	<p>Copy selected photos to subdirectories</p>
+	<p>Selections to export</p>
 
 	<div class="row">
 		<ButtonToggle
@@ -134,8 +134,8 @@
 			}}>
 			<Heart />
 		</ButtonToggle>
-		<span class="info-text" class:info-not-selected={!settings.heart}
-			>Copy dir: <code>./favorite</code></span> <br />
+		<span class="info-text" class:info-not-selected={!settings.favorite}><code> ./favorite</code></span>
+		<br />
 	</div>
 
 	<div class="row">
@@ -145,8 +145,8 @@
 			}}>
 			<Stars3 />
 		</ButtonToggle>
-		<span class="info-text" class:info-not-selected={!settings.star3}
-			>Copy dir: <code>./star3</code></span> <br />
+		<span class="info-text" class:info-not-selected={!settings.star3}><code>./star3</code></span>
+		<br />
 	</div>
 
 	<div class="row">
@@ -156,8 +156,8 @@
 			}}>
 			<Stars2 />
 		</ButtonToggle>
-		<span class="info-text" class:info-not-selected={!settings.star2}
-			>Copy dir: <code>./star2</code></span> <br />
+		<span class="info-text" class:info-not-selected={!settings.star2}><code>./star2</code></span>
+		<br />
 	</div>
 
 	<div class="row">
@@ -167,8 +167,8 @@
 			}}>
 			<Stars1 />
 		</ButtonToggle>
-		<span class="info-text" class:info-not-selected={!settings.star1}
-			>Copy dir: <code>./star1</code></span> <br />
+		<span class="info-text" class:info-not-selected={!settings.star1}><code>./star1</code></span>
+		<br />
 	</div>
 
 	<div class="row">
@@ -179,7 +179,7 @@
 			<Xcross />
 		</ButtonToggle>
 		<span class="info-text" class:info-not-selected={!settings.disliked}
-			>Copy dir: <code>./disliked</code></span>
+			><code>./disliked</code></span>
 		<br />
 	</div>
 
@@ -195,11 +195,11 @@
 			class:warning={settings.delete_original}
 			>Original files
 			{#if settings.delete_original}
-				WILL
+				will
 			{:else}
 				will not
 			{/if}
-			be deleted.</span> <br />
+			be moved to trash</span> <br />
 	</div>
 
 	<div class="export-container">
@@ -211,7 +211,7 @@
 				</p>
 			{/if}
 		{:else}
-			<p class="info-text">No workspace directory selected.</p>
+			<p class="info-text">No workspace directory selected</p>
 		{/if}
 	</div>
 
@@ -221,7 +221,6 @@
 </div>
 
 <style lang="scss">
-
 	code {
 		font-size: 1.1em;
 	}
@@ -256,30 +255,55 @@
 
 	.info-text {
 		margin-left: 8px;
+		transition: color 0.2s ease-in-out;
 	}
 
 	.info-not-selected {
 		color: #777;
 		margin-left: 8px;
+		transition: color 0.2s ease-in-out;
+		// text-decoration: line-through; // might be too much
 	}
 
 	div.row {
 		display: flex;
 		align-items: center;
+		margin: 0.4em;
+	}
+
+	span.slide-in {
+		animation: forwards;
+
+		@keyframes forwards {
+			0% {
+				opacity: 0;
+				transform: translateX(-100%);
+			}
+			100% {
+				opacity: 1;
+				transform: translateX(0%);
+			}
+		}
 	}
 
 	p {
-		margin: 8px;
+		margin: 1em 0.2em;
+		user-select: none;
 	}
 
 	div.export_panel {
 		position: relative;
 		overflow-y: scroll;
 		overflow-x: hidden;
+
+		user-select: none;
+		-webkit-user-select: none;
+		-webkit-user-drag: none;
 	}
 
 	.warning {
 		color: rgb(255, 191, 0);
 		margin-left: 8px;
+		transition: color 0.2s ease-in-out;
 	}
 </style>

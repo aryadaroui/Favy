@@ -10,7 +10,7 @@ Quickly go through your photos, rate them, and filter them in your filesystem.
 
 ## Usage
 
-*Currently useable, but not officially distributed yet!*
+*Currently useable, but not officially distributed yet!* You can check progress on the [kanban board](https://github.com/users/aryadaroui/projects/2/views/1).
 
 To test development version:
 ```zsh

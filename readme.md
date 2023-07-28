@@ -44,7 +44,7 @@ This project also uses:
 
 Copyright 2023 - Arya "Dee" Daroui
 
-Don't redistribute or sell this project. *Otherwise*, MIT/Apache v2.0 Licenses apply.
+Don't redistribute this project. *Otherwise*, MIT/Apache v2.0 Licenses apply.
 
 In other words, you are welcome to...
 
@@ -57,4 +57,4 @@ But...
 - Do not redistribute this project or its executables--especially not for money
 - Do not take significant enough parts of the codebase that you are effectively redistributing it :-/
 
-The intent is that this repo is remain the official home of this project, and that it stays free.
+The intent is that this repo is remain the official home of this project.

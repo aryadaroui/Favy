@@ -237,7 +237,8 @@
 		height: 36px;
 		font-size: medium;
 
-		border: 1px solid dodgerblue;
+		// border: 1px solid dodgerblue;
+		border: #226395 solid 1px;
 
 		&:hover {
 			background-color: #0b2d47;

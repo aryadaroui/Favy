@@ -1,18 +1,17 @@
-use std::io::BufWriter;
 use std::num::NonZeroU32;
 
-use image::codecs::png::PngEncoder;
+// use zune_jpeg::JpegDecoder; // TODO
+use fast_image_resize as fr;
+use image::codecs::jpeg::JpegEncoder; // change this to zune iamge in the future
 use image::io::Reader as ImageReader;
 use image::{ColorType, ImageEncoder};
 
-use fast_image_resize as fr;
+use base64::{engine::general_purpose, Engine as _};
 
-fn resize_simd(img_path: String) {
+#[tauri::command(rename_all = "snake_case")]
+pub async fn resize_simd(image_path: String) -> Result<String, String> {
 	// Read source image from file
-	let img = ImageReader::open(img_path)
-		.unwrap()
-		.decode()
-		.unwrap();
+	let img = ImageReader::open(image_path).unwrap().decode().unwrap();
 	let width = NonZeroU32::new(img.width()).unwrap();
 	let height = NonZeroU32::new(img.height()).unwrap();
 	let mut src_image = fr::Image::from_vec_u8(width, height, img.to_rgba8().into_raw(), fr::PixelType::U8x4).unwrap();
@@ -23,8 +22,8 @@ fn resize_simd(img_path: String) {
 	alpha_mul_div.multiply_alpha_inplace(&mut src_image.view_mut()).unwrap();
 
 	// Create container for data of destination image
-	let dst_width = NonZeroU32::new(1024).unwrap();
-	let dst_height = NonZeroU32::new(768).unwrap();
+	let dst_width = NonZeroU32::new(150).unwrap();
+	let dst_height = NonZeroU32::new(100).unwrap();
 	let mut dst_image = fr::Image::new(dst_width, dst_height, src_image.pixel_type());
 
 	// Get mutable view of destination image data
@@ -38,9 +37,16 @@ fn resize_simd(img_path: String) {
 	// Divide RGB channels of destination image by alpha
 	alpha_mul_div.divide_alpha_inplace(&mut dst_view).unwrap();
 
-	// Write destination image as PNG-file
-	let mut result_buf = BufWriter::new(Vec::new());
-	PngEncoder::new(&mut result_buf)
+	let result_buf = Vec::new();
+	JpegEncoder::new(result_buf)
 		.write_image(dst_image.buffer(), dst_width.get(), dst_height.get(), ColorType::Rgba8)
 		.unwrap();
+
+	let mut result_buf = Vec::new();
+	JpegEncoder::new(&mut result_buf)
+		.write_image(dst_image.buffer(), dst_width.get(), dst_height.get(), ColorType::Rgba8)
+		.unwrap();
+	let base64_str = general_purpose::STANDARD.encode(&result_buf);
+
+	Ok(base64_str)
 }

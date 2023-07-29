@@ -17,11 +17,13 @@ tauri-build = { version = "1.4.0", features = [] }
 [dependencies]
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.4.0", features = [ "api-all", "macos-private-api"] }
+tauri = { version = "1.4.0", features = ["api-all", "macos-private-api"] }
 window-vibrancy = "0.4.0"
 base64 = "0.21.2"
 trash = "3.0.6"
 fast_image_resize = "2.7.3"
+image = "0.24.6"
+zune-jpeg = "0.3.17"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.
@@ -32,9 +34,15 @@ custom-protocol = ["tauri/custom-protocol"]
 [profile.dev]
 opt-level = 0
 
+[profile.dev.package.fast_image_resize]
+opt-level = 3
+
+[profile.dev.package.zune-jpeg]
+opt-level = 3
+
 [profile.release]
-panic = "abort" # Strip expensive panic clean-up logic
+panic = "abort"   # Strip expensive panic clean-up logic
 codegen-units = 1 # Compile crates one after another so the compiler can optimize better
-lto = true # Enables link to optimizations
-opt-level = 3 # Optimize for speed
-strip = true # Remove debug symbols
+lto = true        # Enables link to optimizations
+opt-level = 3     # Optimize for speed
+strip = true      # Remove debug symbols

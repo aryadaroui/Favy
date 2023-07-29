@@ -3,6 +3,7 @@
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import ImageBlobReduce from 'image-blob-reduce';
 	import { status } from '$lib/stores';
+	import { invoke } from '@tauri-apps/api/tauri';
 
 	import ArrowRight from '$lib/icons/ArrowRight.svelte';
 	import ArrowLeft from '$lib/icons/ArrowLeft.svelte';
@@ -29,9 +30,9 @@
 	const ThumbProcessor = {
 		NODE_SHARP: 'NODE_SHARP', // leverages multi-core
 		WEB_CANVAS: 'WEB_CANVAS', // leverages GPU
-		// RUST_SIMD: 'RUST_SIMD', // leverages CPU-SIMD
+		RUST_SIMD: 'RUST_SIMD', // leverages CPU-SIMD
 	};
-	const thumb_processor = ThumbProcessor.NODE_SHARP;
+	const thumb_processor = ThumbProcessor.RUST_SIMD;
 	const reducer = new ImageBlobReduce();
 	let animating = false;
 
@@ -216,8 +217,13 @@
 				// should implement a cache for this
 				return URL.createObjectURL(thumbnail);
 
-			// case ThumbProcessor.RUST_SIMD:
-			// 	break;
+			case ThumbProcessor.RUST_SIMD:
+				// console.log('make_thumbnail(): rust simd');
+				const thumb_base64_ = await invoke('resize_simd', {
+					image_path: dir + photo_name,
+				});
+
+				return 'data:image/jpeg;base64,' + thumb_base64_;
 
 			default:
 				throw new Error(`make_thumbnail(): unknown thumb_processor ${thumb_processor}`);

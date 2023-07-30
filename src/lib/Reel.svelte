@@ -28,7 +28,6 @@
 	// // // declarations
 	// utility
 	const ThumbProcessor = {
-		NODE_SHARP: 'NODE_SHARP', // leverages multi-core
 		WEB_CANVAS: 'WEB_CANVAS', // leverages GPU
 		RUST_SIMD: 'RUST_SIMD', // leverages CPU-SIMD
 	};
@@ -201,15 +200,6 @@
 
 	async function make_thumbnail(photo_name: PhotoName, max_size: number) {
 		switch (thumb_processor) {
-			case ThumbProcessor.NODE_SHARP:
-				const response = await fetch('/make-thumb', {
-					method: 'POST',
-					cache: 'force-cache',
-					body: JSON.stringify({ src_url: dir + photo_name, max_size: max_size }),
-				});
-				const { thumb_base64 } = await response.json();
-				return 'data:image/jpeg;base64,' + thumb_base64;
-
 			case ThumbProcessor.WEB_CANVAS:
 				const blob = await fetch(convertFileSrc(dir + photo_name)).then((r) => r.blob());
 				const thumbnail = await reducer.toBlob(blob, { max: max_size });
@@ -218,11 +208,9 @@
 				return URL.createObjectURL(thumbnail);
 
 			case ThumbProcessor.RUST_SIMD:
-				// console.log('make_thumbnail(): rust simd');
 				const thumb_base64_ = await invoke('resize_simd', {
 					image_path: dir + photo_name,
 				});
-
 				return 'data:image/jpeg;base64,' + thumb_base64_;
 
 			default:

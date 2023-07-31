@@ -81,9 +81,3 @@ can use CSS `visibility:none`, and then on:click, set the popover div to :focus.
 
 Might be too many clicks though. May want to also do :hover for visibility instead
 
-
-
-## possible dependencies?
-
-when using the https://crates.io/crates/kamadak-exif crate, i had 
-

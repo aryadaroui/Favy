@@ -11,7 +11,7 @@ use std::fs::read;
 use base64::{engine::general_purpose, Engine as _};
 
 fn is_jpeg(path: &str) -> bool {
-	path.ends_with(".jpg") || path.ends_with(".jpeg")
+	path.ends_with(".jpg") || path.ends_with(".jpeg") || path.ends_with(".JPG") || path.ends_with(".JPEG")
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -34,7 +34,7 @@ pub async fn resize_simd(image_path: String) -> Result<String, String> {
 		.unwrap();
 
 		// TODO: account for orientation. e.g. use width instead of height if 90 or 270
-		let scale_factor: f32 = (info.height / 200).into();
+		let scale_factor: f32 = (info.height as f32 / 200.0).into();
 
 		let dst_height_jpeg = NonZeroU32::new(200).unwrap();
 		let dst_width_jpeg = NonZeroU32::new((info.width as f32 / scale_factor) as u32).unwrap();
@@ -66,11 +66,11 @@ pub async fn resize_simd(image_path: String) -> Result<String, String> {
 		alpha_mul_div.multiply_alpha_inplace(&mut src_image.view_mut()).unwrap();
 
 
-		let scale_factor: f32 = (info.height / 200).into();
+		let scale_factor: f32 = (height.get() as f32 / 200.0).into();
 
 		// Create container for data of destination image
 		let dst_width = NonZeroU32::new(200).unwrap();
-		let dst_height = NonZeroU32::new((info.width as f32 / scale_factor) as u32).unwrap();
+		let dst_height = NonZeroU32::new((width.get() as f32 / scale_factor) as u32).unwrap();
 		let mut dst_image = fr::Image::new(dst_width, dst_height, src_image.pixel_type());
 
 		// Get mutable view of destination image data

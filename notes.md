@@ -83,3 +83,7 @@ Might be too many clicks though. May want to also do :hover for visibility inste
 
 
 
+## possible dependencies?
+
+when using the https://crates.io/crates/kamadak-exif crate, i had 
+

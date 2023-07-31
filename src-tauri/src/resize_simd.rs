@@ -14,11 +14,11 @@ fn is_jpeg(path: &str) -> bool {
 }
 
 fn encode_jpeg_base64(img: &ImageBuffer<Rgb<u8>, Vec<u8>>) -> String {
-	let mut img_buf: Vec<u8> = Vec::new();
-	JpegEncoder::new(&mut img_buf)
+	let mut jpeg_data: Vec<u8> = Vec::new();
+	JpegEncoder::new(&mut jpeg_data)
 		.write_image(img.as_raw(), img.width(), img.height(), ColorType::Rgb8)
 		.unwrap();
-	let img_base64 = general_purpose::STANDARD.encode(&img_buf);
+	let img_base64 = general_purpose::STANDARD.encode(&jpeg_data);
 	return img_base64;
 }
 
@@ -36,8 +36,8 @@ fn auto_rotate(img: &mut ImageBuffer<Rgb<u8>, Vec<u8>>, orientation: u32) {
 	}
 }
 
-fn orientation_from_file(data: &Vec<u8>) -> u32 {
-	let mut cursor = std::io::Cursor::new(&data);
+fn orientation_from_file(file_data: &Vec<u8>) -> u32 {
+	let mut cursor = std::io::Cursor::new(&file_data);
 	let exifreader = exif::Reader::new();
 	let exif = exifreader.read_from_container(&mut cursor).unwrap();
 
@@ -52,75 +52,105 @@ fn orientation_from_file(data: &Vec<u8>) -> u32 {
 	return orientation;
 }
 
+fn resized_dims(width: u32, height: u32, max_dim: u32) -> (u32, u32) {
+	let aspect_ratio = width as f32 / height as f32;
+	if width > height {
+		let new_width = max_dim;
+		let new_height = (max_dim as f32 / aspect_ratio) as u32;
+		(new_width, new_height)
+	} else {
+		let new_height = max_dim;
+		let new_width = (max_dim as f32 * aspect_ratio) as u32;
+		(new_width, new_height)
+	}
+}
+
 #[tauri::command(rename_all = "snake_case")]
 pub async fn resize_simd(image_path: String) -> Result<String, String> {
 	if is_jpeg(image_path.as_str()) {
-		// if JPEG, use zune_jpeg which is faster
-		// also don't do any alpha channel stuff
-		let data: Vec<u8> = read(image_path).unwrap();
+		// if JPEG, we zune_jpeg which is a faster decoer.
+		// We also read the EXIF to orient the image properly.
 
-		let orientation = orientation_from_file(&data);
-		let mut decoder = JpegDecoder::new(&data);
-		let pixels = decoder.decode().unwrap();
-		let info = decoder.info().unwrap();
+		// Iniitalize
+		let file_data: Vec<u8> = read(image_path).unwrap();
+		let orientation = orientation_from_file(&file_data);
+		let mut decoder = JpegDecoder::new(&file_data);
+		let mut fir_resizer = fr::Resizer::new(fr::ResizeAlg::Nearest);
 
-		let src_image_jpeg = fr::Image::from_vec_u8(
-			NonZeroU32::new(info.width.into()).unwrap(),
-			NonZeroU32::new(info.height.into()).unwrap(),
-			pixels,
+		// Decoder data
+		let img_src = decoder.decode().unwrap();
+		let img_src_info = decoder.info().unwrap();
+
+		// dst dims
+		let (dst_width, dst_height) = resized_dims(img_src_info.width.into(), img_src_info.height.into(), 256); // TODO: set parameter for max_dim
+
+		// set up src and dst images for fir (fast_image_resize)
+		let img_fir_src = fr::Image::from_vec_u8(
+			NonZeroU32::new(img_src_info.width.into()).unwrap(),
+			NonZeroU32::new(img_src_info.height.into()).unwrap(),
+			img_src,
 			fr::PixelType::U8x3,
 		)
 		.unwrap();
+		let mut img_fir_dst = fr::Image::new(
+			NonZeroU32::new(dst_width).unwrap(),
+			NonZeroU32::new(dst_height).unwrap(),
+			img_fir_src.pixel_type(),
+		);
 
+		// resize
+		fir_resizer
+			.resize(&img_fir_src.view(), &mut img_fir_dst.view_mut())
+			.unwrap();
 
-		let scale_factor: f32 = (info.height as f32 / 256.0).into();
+		// convert to rotatable image type
+		let mut img_buffer =
+			ImageBuffer::<Rgb<u8>, Vec<u8>>::from_vec(dst_width, dst_height, img_fir_dst.into_vec()).unwrap();
+		auto_rotate(&mut img_buffer, orientation); // rotate img if needed
+		Ok(encode_jpeg_base64(&img_buffer)) // encode jpeg then to base64
+	} else {
+		// if not JPEG, we use image crate to decode format dynamically
+		// This does NOT handle orientation.
+		// this will also squish the alpha channel to black if it exists.
 
-		let dst_height_jpeg = NonZeroU32::new(256).unwrap();
-		let dst_width_jpeg = NonZeroU32::new((info.width as f32 / scale_factor) as u32).unwrap();
+		// Read source image from file
+		let src_img = ImageReader::open(image_path).unwrap().decode().unwrap();
 
-		let mut dst_image_jpeg = fr::Image::new(dst_width_jpeg, dst_height_jpeg, src_image_jpeg.pixel_type());
-		let mut dst_view_jpeg = dst_image_jpeg.view_mut();
+		// dst dims
+		let (dst_width, dst_height) = resized_dims(src_img.width(), src_img.height(), 256); // TODO: set parameter for max_dim
 
-		let mut resizer_jpeg = fr::Resizer::new(fr::ResizeAlg::Nearest);
-		resizer_jpeg.resize(&src_image_jpeg.view(), &mut dst_view_jpeg).unwrap();
-
-		let mut img = ImageBuffer::<Rgb<u8>, Vec<u8>>::from_vec(
-			dst_width_jpeg.get(),
-			dst_height_jpeg.get(),
-			dst_image_jpeg.into_vec(),
+		// set up src and dst images for fir (fast_image_resize)
+		let img_fir_src = fr::Image::from_vec_u8(
+			NonZeroU32::new(src_img.width()).unwrap(),
+			NonZeroU32::new(src_img.height()).unwrap(),
+			src_img.to_rgba8().into_raw(),
+			fr::PixelType::U8x4,
 		)
 		.unwrap();
-
-		auto_rotate(&mut img, orientation); // rotate img if needed
-		Ok(encode_jpeg_base64(&img))
-	} else {
-		// Read source image from file
-		let img = ImageReader::open(image_path).unwrap().decode().unwrap();
-		let width = NonZeroU32::new(img.width()).unwrap();
-		let height = NonZeroU32::new(img.height()).unwrap();
-		let src_image = fr::Image::from_vec_u8(width, height, img.to_rgba8().into_raw(), fr::PixelType::U8x4).unwrap();
-
-		let scale_factor: f32 = (height.get() as f32 / 200.0).into();
-
-		// Create container for data of destination image
-		let dst_width = NonZeroU32::new(200).unwrap();
-		let dst_height = NonZeroU32::new((width.get() as f32 / scale_factor) as u32).unwrap();
-		let mut dst_image = fr::Image::new(dst_width, dst_height, src_image.pixel_type());
-
-		// Get mutable view of destination image data
-		let mut dst_view = dst_image.view_mut();
+		let mut img_fir_dst = fr::Image::new(
+			NonZeroU32::new(dst_width).unwrap(),
+			NonZeroU32::new(dst_height).unwrap(),
+			img_fir_src.pixel_type(),
+		);
 
 		// Create Resizer instance and resize source image
 		// into buffer of destination image
-		let mut resizer = fr::Resizer::new(fr::ResizeAlg::Nearest);
-		resizer.resize(&src_image.view(), &mut dst_view).unwrap();
-
-		let mut result_buf: Vec<u8> = Vec::new();
-		JpegEncoder::new(&mut result_buf)
-			.write_image(dst_image.buffer(), dst_width.get(), dst_height.get(), ColorType::Rgba8)
+		let mut fir_resizer = fr::Resizer::new(fr::ResizeAlg::Nearest);
+		fir_resizer
+			.resize(&img_fir_src.view(), &mut img_fir_dst.view_mut())
 			.unwrap();
-		let base64_str = general_purpose::STANDARD.encode(&result_buf);
 
-		return Ok(base64_str);
+		// TODO: consolidate this with encode_jpeg_base64()
+		// This work for now, but I'd like to use the same function for both JPEG and non-JPEG
+		// IDK how to manage the Rgba8 vs Rgb8 types, as I get corrupted images with ImageBuffer<Rgba<u8>, Vec<u8>>
+
+		// Encode image to JPEG and convert to base64
+		let mut img_buffer: Vec<u8> = Vec::new();
+		JpegEncoder::new(&mut img_buffer)
+			.write_image(img_fir_dst.buffer(), dst_width, dst_height, ColorType::Rgba8)
+			.unwrap();
+		let base64_str = general_purpose::STANDARD.encode(&img_buffer);
+
+		Ok(base64_str)
 	}
 }

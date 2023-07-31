@@ -208,7 +208,7 @@
 				return URL.createObjectURL(thumbnail);
 
 			case ThumbProcessor.RUST_SIMD:
-				const thumb_base64_ = await invoke('resize_simd', {
+				const thumb_base64_ = await invoke('make_thumb', {
 					image_path: dir + photo_name,
 				});
 				return 'data:image/jpeg;base64,' + thumb_base64_;

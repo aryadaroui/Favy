@@ -66,7 +66,7 @@ fn resized_dims(width: u32, height: u32, max_dim: u32) -> (u32, u32) {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub async fn resize_simd(image_path: String) -> Result<String, String> {
+pub async fn make_thumb(image_path: String) -> Result<String, String> {
 	if is_jpeg(image_path.as_str()) {
 		// if JPEG, we zune_jpeg which is a faster decoer.
 		// We also read the EXIF to orient the image properly.

@@ -4,7 +4,7 @@
 extern crate exif;
 
 mod export;
-mod resize_simd;
+mod make_thumb;
 
 use tauri::Manager;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
@@ -20,7 +20,7 @@ fn main() {
 
 			Ok(())
 		})
-		.invoke_handler(tauri::generate_handler![export::export, resize_simd::resize_simd])
+		.invoke_handler(tauri::generate_handler![export::export, make_thumb::make_thumb])
 		.run(tauri::generate_context!())
 		.expect("Fatal error while running Favy.");
 }

@@ -29,17 +29,21 @@ Favy is built with [Rust](https://www.rust-lang.org/), [Svelte](https://svelte.d
 - [Tauri](https://tauri.app/) (Rust)
 - [SvelteKit](https://kit.svelte.dev/) (Svelte / TypeScript)
 
-This project also uses:
+Other notable packages:
 
-- [Vite](https://vitejs.dev/)
-- [Serde](https://serde.rs/)
-- [Sharp](https://sharp.pixelplumbing.com/)
-- [Sass (SCSS)](https://sass-lang.com/)
-- [Prettier](https://prettier.io/)
-- [Node.js](https://nodejs.org/en)
-- [ESlint](https://eslint.org/)
-- [window-vibrancy](https://github.com/tauri-apps/window-vibrancy)
-- [trash-rs](https://github.com/Byron/trash-rs)
+- Rust
+  - [fast image resize](https://github.com/Cykooz/fast_image_resize)
+  - [zune image (zune-jpeg)](https://github.com/etemesi254/zune-image)
+  - [kamadak-exif](https://github.com/kamadak/exif-rs)
+  - [window-vibrancy](https://github.com/tauri-apps/window-vibrancy)
+  - [Serde](https://serde.rs/)
+
+- TypeScript
+  - [Vite](https://vitejs.dev/)
+  - [Sass (SCSS)](https://sass-lang.com/)
+  - [Prettier](https://prettier.io/)
+  - [ESlint](https://eslint.org/)
+
 
 ## License
 

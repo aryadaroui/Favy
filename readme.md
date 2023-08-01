@@ -2,7 +2,7 @@
 
 # Favy
 
-A simple, cross-platform photo organizer.
+A lightweight, cross-platform photo management app.
 
 Quickly go through your photos, rate them, and filter them in your filesystem.
 
@@ -19,7 +19,7 @@ npm run tauri dev
 
 To build:
 ```zsh
-npm run tauri build # executable found in ./src-tauri/target/
+npm run tauri build
 ```
 
 ## Technology credits

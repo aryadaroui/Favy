@@ -1,8 +1,11 @@
 name: 'publish'
+# temporarily disable auto-build in release
+# on: 
+#   push:
+#     branches:
+#       - release
 on:
-  push:
-    branches:
-      - release
+  workflow_dispatch:
 
 jobs:
   publish-tauri:

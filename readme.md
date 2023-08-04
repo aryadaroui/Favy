@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/aryadaroui/Favy/main/docs/assets/favy-icon-small.webp" width="160" height="160" alt="Favy icon" align="right">
+<img src="https://raw.githubusercontent.com/aryadaroui/Favy/release/docs/assets/favy-icon-small.webp" width="160" height="160" alt="Favy icon" align="right">
 
 # Favy
 
@@ -6,7 +6,7 @@ A lightweight, cross-platform photo management app.
 
 Quickly go through your photos, rate them, and filter them in your filesystem.
 
-![Favy screenshot](https://raw.githubusercontent.com/aryadaroui/Favy/main/docs/assets/screenshot.webp)
+![Favy screenshot](https://raw.githubusercontent.com/aryadaroui/Favy/release/docs/assets/screenshot.webp)
 
 ## Usage
 

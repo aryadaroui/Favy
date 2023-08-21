@@ -2,6 +2,7 @@
 	import { onMount, tick } from 'svelte';
 	import { convertFileSrc } from '@tauri-apps/api/tauri';
 	import ImageBlobReduce from 'image-blob-reduce';
+
 	import { status } from '$lib/stores';
 	import { invoke } from '@tauri-apps/api/tauri';
 
@@ -382,6 +383,9 @@
 		background-color: rgba(32, 32, 32, 0.7);
 		scroll-snap-type: x mandatory;
 
+		user-select: none;
+		-webkit-user-select: none;
+
 		// scrollbar-color: black transparent;
 
 		// ::-webkit-scrollbar {
@@ -421,6 +425,9 @@
 			height: 200px;
 			background-color: rgba(16, 16, 16, 0.2);
 
+			user-select: none;
+			-webkit-user-select: none;
+
 			display: flex;
 			align-items: center;
 
@@ -452,6 +459,8 @@
 			image-rendering: optimizeSpeed;
 			border: 1px solid transparent;
 			transition: all 0.1s ease-in;
+			user-select: none;
+			-webkit-user-select: none;
 			// transition: border 0.4s ease-in; // laggy
 		}
 

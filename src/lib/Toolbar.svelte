@@ -17,6 +17,8 @@
 	import ButtonToggle from './ButtonToggle.svelte'; // temporary
 	import Stars3 from './icons/Stars3.svelte';
 
+	import FilterMenu from '$lib/FilterMenu.svelte';
+
 	import { current_photo, filter, status, photo_names, photo_map } from '$lib/stores';
 	import { onMount } from 'svelte';
 
@@ -224,7 +226,9 @@
 		</button>
 		<div class="filter-menu-hitbox hover-menu-hitbox">
 			<div bind:this={filter_menu} class="hover-menu">
-				<p>Filter stuff!</p>
+				<!-- <p>Filter stuff!</p> -->
+				<FilterMenu />
+
 			</div>
 		</div>
 

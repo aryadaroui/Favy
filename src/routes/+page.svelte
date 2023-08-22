@@ -78,7 +78,6 @@
 
 				image_viewer.set_image($current_photo.photo_name);
 
-
 				// TODO: Filter photos ASAP!
 				reel.set($workspace_dir, $photo_names.filter(filter), 100);
 
@@ -87,7 +86,6 @@
 				window.favy.photo_map = $photo_map;
 				window.favy.photo_names = $photo_names;
 				window.favy.current_photo = $current_photo;
-
 			} else {
 			}
 		});
@@ -191,6 +189,7 @@
 	</Modal>
 
 	<ImageViewer bind:this={image_viewer} />
+	
 
 	<Toolbar
 		{choose_dir}

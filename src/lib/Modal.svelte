@@ -3,31 +3,39 @@
 
 	export const open = () => {
 		is_open = true;
-		modal_node.focus();
+		// modal_node.focus();
 	};
 
 	let is_open = false;
 	let modal_node: HTMLDivElement;
+	let overlay_node: HTMLDivElement;
 
 	onMount(() => {
 		// modal_node.addEventListener('focusin', () => {});
 
 		// blur is triggered when focus is lost. similar to focusout
-		modal_node.addEventListener('blur', () => {
-			is_open = false;
+		// modal_node.addEventListener('blur', () => {
+		// 	is_open = false;
+		// });
+
+		addEventListener('click', (e) => {
+			if (e.target === overlay_node) {
+				is_open = false;
+			}
 		});
+
 
 		window.addEventListener('keydown', (e) => {
 			if (e.key === 'Escape') {
-				modal_node.blur(); // focus out
+				is_open = false;
 			}
 		});
 	});
 </script>
 
-<div class="overlay" class:overlay-open={is_open}>
+<div bind:this={overlay_node} class="overlay" class:overlay-open={is_open}>
 	<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-	<div bind:this={modal_node} class="modal" class:modal-open={is_open} tabindex="0">
+	<div bind:this={modal_node} class="modal" class:modal-open={is_open}>
 		<!-- <p>Modal stuff here</p> -->
 		<slot />
 	</div>
@@ -84,9 +92,12 @@
 
 		outline: none;
 
-		&:focus {
-			border: 1px solid rgba($color: #fff, $alpha: 0.35);
-		}
+		border: 1px solid rgba($color: #fff, $alpha: 0.35);
+
+
+		// &:focus {
+		// 	border: 1px solid rgba($color: #fff, $alpha: 0.35);
+		// }
 	}
 
 	.modal-open {

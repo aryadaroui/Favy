@@ -6,29 +6,49 @@
 	import Xcross from '$lib/icons/Xcross.svelte';
 	import And from '$lib/icons/And.svelte';
 	import ButtonToggle from '$lib/ButtonToggle.svelte';
+
+	let filter_settings = {
+		dislike: false,
+		favorite: false,
+		and: false,
+		star3: false,
+		star2: false,
+		star1: false,
+		
+	};
+
 </script>
 
-<p>Filter menu stuff!</p>
 
-<ButtonToggle on_click={(is_on_after) => {}}>
-	<And />
-</ButtonToggle>
-<ButtonToggle on_click={(is_on_after) => {}}>
-	<Xcross />
-</ButtonToggle>
-<ButtonToggle on_click={(is_on_after) => {}}>
-	<Stars1 />
-</ButtonToggle>
-<ButtonToggle on_click={(is_on_after) => {}}>
-	<Stars2 />
-</ButtonToggle>
-<ButtonToggle on_click={(is_on_after) => {}}>
-	<Stars3 />
-</ButtonToggle>
-<ButtonToggle on_click={(is_on_after) => {}}>
-	<Heart />
-</ButtonToggle>
+<div class="row">
+	<ButtonToggle on_click={(is_on_after) => {}}>
+		<Xcross />
+	</ButtonToggle>
+	<ButtonToggle on_click={(is_on_after) => {}}>
+		<Heart />
+	</ButtonToggle>
+	<ButtonToggle on_click={(is_on_after) => {}}>
+		<And />
+	</ButtonToggle>
+</div>
 
+<div class="row">
+	<ButtonToggle on_click={(is_on_after) => {}}>
+		<Stars1 />
+	</ButtonToggle>
+	<ButtonToggle on_click={(is_on_after) => {}}>
+		<Stars2 />
+	</ButtonToggle>
+	<ButtonToggle on_click={(is_on_after) => {}}>
+		<Stars3 />
+	</ButtonToggle>
+</div>
 
 <style lang="scss">
+	.row {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
 </style>

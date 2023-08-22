@@ -46,7 +46,11 @@
 		color: #aaa;
 		fill: rgba(0, 0, 0, 0);
 		border-radius: 8px;
-		border: 1px solid #aaa;
+		border: 1px solid #cccccc33;
+		// border: 1px solid transparent;
+
+		margin: 2px;
+
 
 		cursor: pointer;
 		user-select: none;
@@ -81,7 +85,8 @@
 		color: #111;
 		// color: rgba(255, 0, 115, 1.0);
 
-		border: 1px solid transparent;
+		border: 1px solid #ccc;
+		// fill: #ccc;
 
 		transition-property: background-color, color;
 		transition-duration: 0.1s;
@@ -91,6 +96,9 @@
 		&:hover {
 			background-color: rgba(200, 200, 200, 0.8);
 			color: #333;
+
+			border: 1px solid #eee;
+
 
 			transition-property: background-color, color;
 			transition-duration: 0.1s;

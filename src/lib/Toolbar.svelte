@@ -320,8 +320,8 @@
 
 	.hover-menu {
 		border-radius: 16px;
-		width: 200px;
-		height: 200px;
+		// width: 200px;
+		// height: 200px;
 		background-color: rgba(2, 2, 2, 0.8);
 		z-index: 1; /* make sure the div is above other elements */
 		overflow: hidden;
@@ -331,16 +331,16 @@
 		// border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
 		box-shadow: 0px 8px 18px 0px rgba(0, 0, 0, 0.5);
-		padding: 0 1em;
+		padding: 1em 1em;
 	}
 
 	.hover-menu-hitbox {
 		filter: blur(9px);
 		visibility: hidden;
 		opacity: 0;
-		transition: all 0.15s ease-in-out;
+		transition: all 0.2s ease-in-out;
 		border-radius: 16px;
-		padding: 2em 1em 1em 1em;
+		padding: 1em 1em 1em 1em;
 
 		// border: 1px solid pink;
 
@@ -349,7 +349,11 @@
 			opacity: 1;
 			filter: blur(0px);
 			transform: translateY(-12px);
-			transition: all 0.15s ease-in-out;
+			transition: all 0.2s ease-in-out;
+		}
+
+		&:has( + .filter-button) {
+			border: 1px solid red;
 		}
 	}
 
@@ -375,7 +379,7 @@
 			opacity: 1;
 			filter: blur(0px);
 			transform: translateY(-12px);
-			transition: all 0.15s ease-in-out;
+			transition: all 0.2s ease-in-out;
 		}
 
 		&:active {

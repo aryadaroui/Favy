@@ -62,7 +62,7 @@
 	.overlay-open {
 		opacity: 1;
 		pointer-events: all;
-		background-color: rgba(100, 100, 100, 0.3);
+		background-color: rgba(80, 80, 80, 0.4);
 		transition: all 0.4s ease-in-out;
 	}
 

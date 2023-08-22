@@ -5,6 +5,7 @@
 	import Stars1 from '$lib/icons/Stars1.svelte';
 	import Xcross from '$lib/icons/Xcross.svelte';
 	import And from '$lib/icons/And.svelte';
+	import Dot from '$lib/icons/Dot.svelte';
 	import ButtonToggle from '$lib/ButtonToggle.svelte';
 
 	let filter_settings = {
@@ -14,13 +15,13 @@
 		star3: false,
 		star2: false,
 		star1: false,
-		
 	};
-
 </script>
 
-
 <div class="row">
+	<ButtonToggle on_click={(is_on_after) => {}}>
+		<Dot />
+	</ButtonToggle>
 	<ButtonToggle on_click={(is_on_after) => {}}>
 		<Xcross />
 	</ButtonToggle>
@@ -33,6 +34,9 @@
 </div>
 
 <div class="row">
+	<ButtonToggle on_click={(is_on_after) => {}}>
+		<Dot />
+	</ButtonToggle>
 	<ButtonToggle on_click={(is_on_after) => {}}>
 		<Stars1 />
 	</ButtonToggle>

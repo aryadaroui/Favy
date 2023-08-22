@@ -62,7 +62,7 @@
 		transition-timing-function: ease-in-out;
 
 		&:hover {
-			background-color: rgba(127, 127, 127, 0.2);
+			background-color: rgba(127, 127, 127, 0.1);
 			color: #ddd;
 
 			transition-property: background-color, color;
